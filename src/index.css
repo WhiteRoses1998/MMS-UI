@@ -1,0 +1,55 @@
+/* src/index.css - ไฟล์หลักสำหรับ Tailwind v4 */
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #0f766e; /* teal เข้มตามธีมระบบคุณ */
+  --color-primary-dark: #065f46;
+  --color-accent: #0f766e;
+}
+
+/* ปรับขนาดตัวอักษรทั้งระบบให้เล็กลงเป็น 10px */
+@layer base {
+  html {
+    font-size: 10px; /* 1rem = 10px (root font size) */
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+    font-size: 1rem; /* = 10px */
+    line-height: 1.4; /* ปรับระยะห่างบรรทัดให้อ่านง่ายขึ้นนิด */
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: 1.6rem; /* หัวข้อใหญ่ขึ้นนิดหน่อย 16px */
+    line-height: 1.2;
+  }
+
+  p,
+  label,
+  span,
+  div {
+    font-size: 1rem; /* 10px ตามระบบ */
+  }
+
+  input,
+  button,
+  select,
+  textarea {
+    font-size: 1rem; /* 10px */
+  }
+
+  /* ถ้าต้องการให้บางส่วนใหญ่ขึ้น (เช่น button, tab label) */
+  button,
+  .tab-label {
+    font-size: 1.1rem; /* 11px ถ้าอยากให้เด่นขึ้น */
+  }
+
+  .input {
+    @apply w-full border rounded px-3 py-2 bg-gray-100 text-sm;
+  }
+}
