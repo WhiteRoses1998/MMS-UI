@@ -32,7 +32,7 @@ export default function Sidebar() {
       <div className="p-4 flex items-center justify-between">
         <div className="text-xl font-bold">MMS Admin</div>
         <button onClick={toggle} className="p-2 rounded hover:bg-teal-800">
-          <X size={24} />
+          <X size={18} />
         </button>
       </div>
 
