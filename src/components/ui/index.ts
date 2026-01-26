@@ -5,3 +5,14 @@ export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 export { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 export { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table';
 export { Checkbox } from '@/components/ui/checkbox';
+export {
+  DialogPortal,
+  DialogOverlay,
+  DialogTrigger,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+  } from '@/components/ui/dialog';
