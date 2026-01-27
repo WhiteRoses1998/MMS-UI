@@ -1,5 +1,4 @@
 // WorkOrderTable.tsx
-import { Wrench, User } from "lucide-react";
 import { useSidebar } from "@/hooks/useSidebar";
 import SearchBox from "@/components/common/SearchBox";
 import { WorkOrder } from "@/features/workorder/types";
@@ -146,10 +145,8 @@ const mockWorkOrders: WorkOrder[] = [
 export default function WorkOrderTable({ onSelect }: Props) {
   const { isOpen: isSidebarOpen } = useSidebar();
 
-  // แสดงข้อมูลทั้งหมด (ไม่ใช้ pagination state)
   const displayedOrders = mockWorkOrders;
 
-  // คำนวณความกว้างของตารางตาม sidebar state ขนาดตารางของ WorkOrderList
   const tableContainerWidth = isSidebarOpen 
     ? 'calc(100vw - 230px - 3rem)' 
     : 'calc(100vw - 70px - 3rem)';
@@ -163,17 +160,12 @@ export default function WorkOrderTable({ onSelect }: Props) {
     return "bg-gray-500 text-white";
   };
 
-  const getRespondMinsStyle = (mins: string | null) => {
-    if (mins === null || mins === "null") return "bg-orange-400 text-white";
-    return "bg-yellow-500 text-gray-800";
-  };
-
   return (
     <div className="p-5 bg-gray-50 min-h-screen space-y-6">
-      {/* Search Box - ใช้ component ใหม่ */}
+      {/* Search Box */}
       <SearchBox />
 
-      {/* List Box / ตาราง - ขยายตามพื้นที่ที่เหลือ */}
+      {/* Table Container */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 max-w-full overflow-hidden">
         <div className="p-4 border-b bg-gray-50 flex items-center justify-between">
           <div>
@@ -184,7 +176,6 @@ export default function WorkOrderTable({ onSelect }: Props) {
           </div>
         </div>
 
-        {/* Container สำหรับ Scroll - ขยายอัตโนมัติตาม sidebar */}
         <div 
           className="overflow-auto border transition-all duration-300"
           style={{ 
@@ -192,18 +183,11 @@ export default function WorkOrderTable({ onSelect }: Props) {
             maxWidth: tableContainerWidth,
           }}
         >
-          {/* Table ต้องมี minWidth ที่กว้างกว่า container เพื่อให้เกิด scroll */}
-          <table className="border-collapse text-sm table-fixed" style={{ minWidth: '2000px' }}>
+          <table className="border-collapse text-sm table-fixed" style={{ minWidth: '1400px' }}>
             <thead>
               <tr className="bg-cyan-50 border-b sticky top-0 z-10">
                 <th className="px-3 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '60px' }}>
                   #
-                </th>
-                <th className="px-3 py-3 text-center font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '100px' }}>
-                  Breakdown
-                </th>
-                <th className="px-3 py-3 text-center font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '100px' }}>
-                  Usage Alert
                 </th>
                 <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '120px' }}>
                   Work Order
@@ -247,12 +231,6 @@ export default function WorkOrderTable({ onSelect }: Props) {
                 <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '280px' }}>
                   Priority
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '150px' }}>
-                  Plan Respond Mins
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '130px' }}>
-                  Respond Mins
-                </th>
                 <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50" style={{ minWidth: '90px' }}>
                   Site ID
                 </th>
@@ -268,12 +246,6 @@ export default function WorkOrderTable({ onSelect }: Props) {
                   }`}
                 >
                   <td className="px-3 py-3 border-r">{index + 1}</td>
-                  <td className="px-3 py-3 text-center border-r">
-                    {row.breakdown && <Wrench className="text-orange-500 mx-auto" size={20} />}
-                  </td>
-                  <td className="px-3 py-3 text-center border-r">
-                    {row.usageAlert && <User className="text-orange-400 mx-auto" size={20} />}
-                  </td>
                   <td className="px-4 py-3 font-medium whitespace-nowrap border-r">{row.workOrder}</td>
                   <td className="px-4 py-3 border-r">
                     <div className="max-w-[300px] truncate" title={row.faultDesc}>
@@ -311,16 +283,6 @@ export default function WorkOrderTable({ onSelect }: Props) {
                     <div className="max-w-[280px] truncate" title={row.priority}>
                       {row.priority}
                     </div>
-                  </td>
-                  <td className="px-4 py-3 border-r">
-                    <span className="inline-block px-2 py-1 bg-yellow-400 text-gray-800 rounded text-xs font-bold whitespace-nowrap">
-                      {row.planRespondMins}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 border-r">
-                    <span className={`inline-block px-2 py-1 rounded text-xs font-bold whitespace-nowrap ${getRespondMinsStyle(row.respondMins)}`}>
-                      {row.respondMins ?? "null"}
-                    </span>
                   </td>
                   <td className="px-4 py-3 whitespace-nowrap">{row.siteId}</td>
                 </tr>
