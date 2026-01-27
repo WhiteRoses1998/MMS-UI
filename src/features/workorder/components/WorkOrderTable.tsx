@@ -1,7 +1,7 @@
 // WorkOrderTable.tsx
 import { Wrench, User } from "lucide-react";
 import { useSidebar } from "@/hooks/useSidebar";
-
+import SearchBox from "@/components/common/SearchBox";
 import { WorkOrder } from "@/features/workorder/types";
 
 interface Props {
@@ -170,74 +170,8 @@ export default function WorkOrderTable({ onSelect }: Props) {
 
   return (
     <div className="p-5 bg-gray-50 min-h-screen space-y-6">
-      {/* Search Box */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-5">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Work Order</label>
-              <input
-                type="text"
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-                placeholder="Work Order"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Equipment</label>
-              <select className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
-                <option>Select</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Breakdown</label>
-              <select className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
-                <option>Select All</option>
-                <option>Yes</option>
-                <option>No</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Usage Alert</label>
-              <select className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500">
-                <option>Select All</option>
-                <option>Yes</option>
-                <option>No</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="mb-5">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Site ID</label>
-            <div className="flex flex-wrap gap-2 p-2 border border-gray-300 rounded-md bg-white min-h-[42px]">
-              <div className="flex items-center gap-1 bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-sm">
-                DMT-คลังย่อยอมปารุจ
-                <button className="text-teal-600 hover:text-teal-800">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-              <input
-                type="text"
-                className="flex-1 min-w-[200px] outline-none text-sm"
-                placeholder="พิมพ์ Site ID แล้วกด Enter..."
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex gap-3">
-              <button className="px-6 py-2 border border-gray-300 rounded-md text-sm text-gray-700 hover:bg-gray-100">
-                Clear
-              </button>
-              <button className="px-6 py-2 bg-teal-600 text-white rounded-md text-sm hover:bg-teal-700">
-                Search
-              </button>
-            </div>
-            <a href="#" className="text-sm text-teal-600 hover:underline">Advanced search</a>
-          </div>
-        </div>
-      </div>
+      {/* Search Box - ใช้ component ใหม่ */}
+      <SearchBox />
 
       {/* List Box / ตาราง - ขยายตามพื้นที่ที่เหลือ */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 max-w-full overflow-hidden">
