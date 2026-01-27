@@ -4,7 +4,7 @@ import { FileText, Clock, CheckCircle, ClipboardList } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui';
 import { Button } from '@/components/ui';
-import FilterForm from '@/components/common/FilterForm'; // ← Import component แยก
+import FilterForm from '@/components/common/FilterForm';
 
 interface WorkOrder {
   id: string;
@@ -56,7 +56,7 @@ export default function Dashboard() {
       location: 'อาคาร C ห้อง 101',
       date: '13 มี.ค. 2567',
       status: 'completed',
-      statusText: 'Completed'
+      statusText: 'Close Job'
     },
     {
       id: 'REQ004',
@@ -113,7 +113,7 @@ export default function Dashboard() {
       case 'in-progress':
         return 'bg-blue-100 text-blue-800';
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-red-500 text-white';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -196,46 +196,44 @@ export default function Dashboard() {
       />
 
       {/* Work Order Table */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-xl font-bold mb-4">Work Order List</h2>
-
+      <div className="bg-white rounded-lg shadow-md border border-gray-200">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>WO ID</TableHead>
-                <TableHead>Reporter</TableHead>
-                <TableHead>Issue</TableHead>
-                <TableHead>Department</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Action</TableHead>
+              <TableRow className="bg-cyan-50 border-b border-gray-200">
+                <TableHead className="font-medium text-gray-700 text-sm">Work Order</TableHead>
+                <TableHead className="font-medium text-gray-700 text-sm">Work Order Group</TableHead>
+                <TableHead className="font-medium text-gray-700 text-sm">Fault Description</TableHead>
+                <TableHead className="font-medium text-gray-700 text-sm">Directive</TableHead>
+                <TableHead className="font-medium text-gray-700 text-sm">Equipment</TableHead>
+                <TableHead className="font-medium text-gray-700 text-sm">Work Master</TableHead>
+                <TableHead className="font-medium text-gray-700 text-sm">Work Type</TableHead>
+                <TableHead className="font-medium text-gray-700 text-sm">Department</TableHead>
+                <TableHead className="font-medium text-gray-700 text-sm">Status</TableHead>
+                <TableHead className="font-medium text-gray-700 text-sm">WO Gen Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {(filteredOrders.length > 0 ? filteredOrders : allWorkOrders).map((order) => (
-                <TableRow key={order.id} className="hover:bg-gray-50">
-                  <TableCell className="font-medium">{order.id}</TableCell>
-                  <TableCell>{order.reporter}</TableCell>
-                  <TableCell>{order.issue}</TableCell>
+                <TableRow key={order.id} className="hover:bg-gray-50 border-b border-gray-200">
+                  <TableCell className="font-medium text-sm">{order.id}</TableCell>
+                  <TableCell className="text-sm">{order.reporter}</TableCell>
+                  <TableCell className="text-sm">{order.issue}</TableCell>
+                  <TableCell className="text-gray-500 text-sm">-</TableCell>
+                  <TableCell className="text-gray-500 text-sm">-</TableCell>
+                  <TableCell className="text-gray-500 text-sm">-</TableCell>
+                  <TableCell className="text-gray-500 text-sm">-</TableCell>
                   <TableCell>
                     <span className={`px-3 py-1 text-xs font-medium rounded-full ${getDepartmentColor(order.department)}`}>
                       {order.department}
                     </span>
                   </TableCell>
-                  <TableCell>{order.location}</TableCell>
-                  <TableCell>{order.date}</TableCell>
                   <TableCell>
-                    <span className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusColor(order.status)}`}>
+                    <span className={`px-4 py-1 text-xs font-bold rounded ${getStatusColor(order.status)}`}>
                       {order.statusText}
                     </span>
                   </TableCell>
-                  <TableCell>
-                    <Button variant="outline" className="text-blue-600 border-blue-600 hover:bg-blue-50">
-                      ดูรายละเอียด
-                    </Button>
-                  </TableCell>
+                  <TableCell className="text-gray-700 text-sm">{order.date}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -247,6 +245,24 @@ export default function Dashboard() {
             ไม่พบข้อมูลที่ตรงกับการค้นหา
           </div>
         )}
+        
+        {/* Pagination */}
+        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50">
+          <div className="text-sm text-gray-600">
+            Showing 1 to {(filteredOrders.length > 0 ? filteredOrders : allWorkOrders).length} of {allWorkOrders.length} entries
+          </div>
+          <div className="flex gap-1">
+            <Button variant="outline" size="sm" disabled className="text-gray-500">Previous</Button>
+            <Button size="sm" className="bg-teal-600 text-white hover:bg-teal-700 border-0">1</Button>
+            <Button variant="outline" size="sm" className="hover:bg-teal-50">2</Button>
+            <Button variant="outline" size="sm" className="hover:bg-teal-50">3</Button>
+            <Button variant="outline" size="sm" className="hover:bg-teal-50">4</Button>
+            <Button variant="outline" size="sm" className="hover:bg-teal-50">5</Button>
+            <span className="px-2 py-1 text-sm text-gray-500">...</span>
+            <Button variant="outline" size="sm" className="hover:bg-teal-50">188</Button>
+            <Button variant="outline" size="sm" className="hover:bg-teal-50">Next</Button>
+          </div>
+        </div>
       </div>
     </div>
   );

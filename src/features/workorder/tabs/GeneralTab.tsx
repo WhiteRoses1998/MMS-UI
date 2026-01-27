@@ -386,16 +386,6 @@ export default function GeneralTab({ workOrder }: Props) {
             />
           </div>
         </div>
-
-        {/* Right Side: Buttons */}
-        <div className="flex gap-3 ml-6">
-          <button className="px-6 py-2 bg-white text-teal-600 text-sm font-medium rounded border border-teal-600 hover:bg-teal-50 focus:outline-none focus:ring-2 focus:ring-teal-500">
-            Close
-          </button>
-          <button className="px-6 py-2 bg-teal-600 text-white text-sm font-medium rounded hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-500">
-            Save
-          </button>
-        </div>
       </div>
     </div>
   );

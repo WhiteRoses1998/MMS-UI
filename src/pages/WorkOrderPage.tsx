@@ -50,7 +50,7 @@ export default function WorkOrderPage() {
         <DialogContent className="max-w-[98vw] h-[96vh] p-0 overflow-hidden rounded-none shadow-2xl border-0">
           {/* Header */}
           <DialogHeader className="px-8 py-4 bg-teal-700 text-white flex flex-row items-center justify-between border-b-0">
-            <DialogTitle className="text-xl font-medium tracking-tight">
+            <DialogTitle className="text-xl font-medium tracking-tight">  
               Prepare Separate Work Order
             </DialogTitle>
             <DialogClose asChild>
