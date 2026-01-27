@@ -48,12 +48,6 @@ const Login: React.FC = () => {
       {/* Header */}
       <div className="bg-teal-700 text-white px-6 py-4 flex justify-between items-center shadow-md">
         <div className="text-xl font-medium">| MMS</div>
-        <button 
-          aria-label="Close"
-          className="hover:bg-teal-600 p-1.5 rounded transition-colors"
-        >
-          <X size={22} />
-        </button>
       </div>
 
       {/* Main Content */}
