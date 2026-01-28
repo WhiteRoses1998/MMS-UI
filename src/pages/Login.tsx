@@ -56,18 +56,6 @@ const Login: React.FC = () => {
           {/* Title */}
           <h2 className="text-3xl font-normal text-center mb-10 text-gray-800">Log in</h2>
 
-          {/* Language Selector */}
-          <div className="flex justify-end mb-8">
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              className="border border-gray-300 rounded px-4 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-white cursor-pointer"
-            >
-              <option value="ENG">ENG</option>
-              <option value="THA">THA</option>
-            </select>
-          </div>
-
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Error Message */}
@@ -106,7 +94,7 @@ const Login: React.FC = () => {
                 className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 transition-colors"
                 aria-label={showPassword ? "ซ่อนรหัสผ่าน" : "แสดงรหัสผ่าน"}
               >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
               </button>
             </div>
 
