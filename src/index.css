@@ -10,12 +10,12 @@
 /* ปรับขนาดตัวอักษรทั้งระบบให้เล็กลงเป็น 10px */
 @layer base {
   html {
-    font-size: 10px; /* 1rem = 10px (root font size) */
+    font-size: 11px; /* 1rem = 10px (root font size) */
   }
 
   body {
     @apply bg-gray-50 text-gray-900 antialiased;
-    font-size: 1rem; /* = 10px */
+    font-size: 11px; /* = 10px */
     line-height: 1.4; /* ปรับระยะห่างบรรทัดให้อ่านง่ายขึ้นนิด */
   }
 
@@ -33,14 +33,14 @@
   label,
   span,
   div {
-    font-size: 1rem; /* 10px ตามระบบ */
+    font-size: 1.1rem; /* 10px ตามระบบ */
   }
 
   input,
   button,
   select,
   textarea {
-    font-size: 1rem; /* 10px */
+    font-size: 1.1rem; /* 10px */
   }
 
   /* ถ้าต้องการให้บางส่วนใหญ่ขึ้น (เช่น button, tab label) */
