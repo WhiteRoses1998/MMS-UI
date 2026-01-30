@@ -1,14 +1,76 @@
-import { useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function ChangePassword() {
+  // ดูตัวอักษรที่ซ่อน
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  //แก้ไขรหัสผ่าน
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  //funcyion submit
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // 🔐 validate
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      alert("กรุณากรอกข้อมูลให้ครบ");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      alert("รหัสผ่านใหม่ไม่ตรงกัน");
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      alert("รหัสผ่านต้องอย่างน้อย 6 ตัวอักษร");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const token = localStorage.getItem("token");
+
+      const res = await fetch("/api/users/change-password", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          old_password: oldPassword,
+          new_password: newPassword,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Change password failed");
+      }
+
+      alert("เปลี่ยนรหัสผ่านสำเร็จ");
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      alert(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-8 py-16">
-      <div className="
+      <div
+        className="
         w-full
         max-w-xl
         lg:max-w-3xl
@@ -17,7 +79,8 @@ export default function ChangePassword() {
         p-12
         rounded-2xl
         shadow-xl
-      ">
+      "
+      >
         <h1 className="text-3xl font-bold mb-8 text-teal-700 text-center">
           Change Password
         </h1>
@@ -25,11 +88,12 @@ export default function ChangePassword() {
         <ul className="mb-10 text-base text-gray-600 list-disc pl-6 space-y-2">
           <li>รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร</li>
           <li>
-            รหัสผ่านต้องประกอบด้วยตัวพิมพ์ใหญ่ ตัวพิมพ์เล็ก ตัวเลข และสัญลักษณ์อย่างน้อย 1 ตัว
+            รหัสผ่านต้องประกอบด้วยตัวพิมพ์ใหญ่ ตัวพิมพ์เล็ก ตัวเลข
+            และสัญลักษณ์อย่างน้อย 1 ตัว
           </li>
         </ul>
 
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handleSubmit}>
           {/* Old Password */}
           <div>
             <label className="block text-gray-700 font-semibold mb-2">
@@ -38,6 +102,8 @@ export default function ChangePassword() {
             <div className="relative">
               <input
                 type={showOldPassword ? "text" : "password"}
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
                 className="
                   w-full
                   border border-gray-300
@@ -65,11 +131,7 @@ export default function ChangePassword() {
                   focus:outline-none
                 "
               >
-                {showOldPassword ? (
-                  <Eye size={20} />
-                ) : (
-                  <EyeOff size={20} />
-                )}
+                {showOldPassword ? <Eye size={20} /> : <EyeOff size={20} />}
               </button>
             </div>
           </div>
@@ -82,6 +144,8 @@ export default function ChangePassword() {
             <div className="relative">
               <input
                 type={showNewPassword ? "text" : "password"}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
                 className="
                   w-full
                   border border-gray-300
@@ -109,11 +173,7 @@ export default function ChangePassword() {
                   focus:outline-none
                 "
               >
-                {showNewPassword ? (
-                  <Eye size={20} />
-                ) : (
-                  <EyeOff size={20} />
-                )}
+                {showNewPassword ? <Eye size={20} /> : <EyeOff size={20} />}
               </button>
             </div>
           </div>
@@ -126,6 +186,8 @@ export default function ChangePassword() {
             <div className="relative">
               <input
                 type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 className="
                   w-full
                   border border-gray-300
@@ -153,17 +215,14 @@ export default function ChangePassword() {
                   focus:outline-none
                 "
               >
-                {showConfirmPassword ? (
-                  <Eye size={20} />
-                ) : (
-                  <EyeOff size={20} />
-                )}
+                {showConfirmPassword ? <Eye size={20} /> : <EyeOff size={20} />}
               </button>
             </div>
           </div>
 
           <button
             type="submit"
+            disabled={loading}
             className="
               mt-6
               w-full
@@ -178,7 +237,7 @@ export default function ChangePassword() {
               shadow-md
             "
           >
-            Save Change
+            {loading ? 'Saving...' : 'Save Change'}
           </button>
         </form>
       </div>

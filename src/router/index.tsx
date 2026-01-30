@@ -6,19 +6,22 @@ import Dashboard from '@/pages/Dashboard';
 import ChangePassword from '@/pages/ChangePassword';
 import WorkOrderPage from '@/pages/WorkOrderPage';
 import PreWorkOrderPage from '@/pages/PreWorkOrderPage';
+import React from 'react';
 
-// Component สำหรับตรวจสอบ Authentication
+/**
+ * ProtectedRoute
+ * ใช้ token เป็นตัวตัดสินการ login (JWT)
+ */
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-  
-  if (!isAuthenticated) {
+  const token = localStorage.getItem('token');
+
+  if (!token) {
     return <Navigate to="/login" replace />;
   }
-  
+
   return <>{children}</>;
 };
 
-// สร้าง router
 const router = createBrowserRouter([
   {
     path: '/login',
@@ -45,8 +48,8 @@ const router = createBrowserRouter([
         element: <ChangePassword />,
       },
       {
-        path : 'preworkorder',
-        element: <PreWorkOrderPage />
+        path: 'preworkorder',
+        element: <PreWorkOrderPage />,
       },
       {
         path: 'workorder',
@@ -61,7 +64,10 @@ const router = createBrowserRouter([
         <div className="text-center">
           <h1 className="text-6xl font-bold text-gray-800">404</h1>
           <p className="text-2xl text-gray-600 mt-4">Page Not Found</p>
-          <a href="/login" className="mt-6 inline-block bg-teal-700 text-white px-6 py-3 rounded hover:bg-teal-800">
+          <a
+            href="/login"
+            className="mt-6 inline-block bg-teal-700 text-white px-6 py-3 rounded hover:bg-teal-800"
+          >
             Back to Login
           </a>
         </div>

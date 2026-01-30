@@ -36,5 +36,11 @@ export default defineConfig({
     fs: {
       strict: false, // ช่วยบน Windows ถ้า path ยาวหรือ symlink
     },
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000', // 👈 port backend ของคุณ
+        changeOrigin: true,
+      },
+    }
   },
 })
