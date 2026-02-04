@@ -1,19 +1,22 @@
 // src/router/index.tsx
-import { createBrowserRouter, Navigate } from 'react-router-dom';
-import AppLayout from '@/components/layout/AppLayout';
-import Login from '@/pages/Login';
-import Dashboard from '@/pages/Dashboard';
-import ChangePassword from '@/pages/ChangePassword';
-import WorkOrderPage from '@/pages/WorkOrderPage';
-import PreWorkOrderPage from '@/pages/PreWorkOrderPage';
-import React from 'react';
+import { createBrowserRouter, Navigate } from "react-router-dom";
+import AppLayout from "@/components/layout/AppLayout";
+import Login from "@/pages/Login";
+import Dashboard from "@/pages/Dashboard";
+import ChangePassword from "@/pages/ChangePassword";
+import WorkOrderPage from "@/pages/WorkOrderPage"; // หน้าว่าง (แก้จาก ActivityWorkOrderPage)
+import PreWorkOrderPage from "@/features/PreWorkOrder/pages/PreWorkOrderPage";
+import ActivityWorkOrderPage from "@/features/WorkOrder/pages/ActivityWorkOrderPage";
+import WorkOrderGroupPage from "@/features/GroupWorkOrder/page/GroupWorkOrderPage";
+import HistoricalWorkOrderPage from "@/features/WorkOrder/pages/HistoricalWorkOrderPage";
+import React from "react";
 
 /**
  * ProtectedRoute
  * ใช้ token เป็นตัวตัดสินการ login (JWT)
  */
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   if (!token) {
     return <Navigate to="/login" replace />;
@@ -24,11 +27,11 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 const router = createBrowserRouter([
   {
-    path: '/login',
+    path: "/login",
     element: <Login />,
   },
   {
-    path: '/',
+    path: "/",
     element: (
       <ProtectedRoute>
         <AppLayout />
@@ -37,28 +40,46 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
+        element: <Navigate to="/dashboard" replace />, // redirect / -> /dashboard
+      },
+      {
+        path: "dashboard",
         element: <Dashboard />,
       },
       {
-        path: 'dashboard',
-        element: <Dashboard />,
-      },
-      {
-        path: 'change-password',
+        path: "change-password",
         element: <ChangePassword />,
       },
+      // Work Order Routes - ตรงกับ Sidebar
       {
-        path: 'preworkorder',
-        element: <PreWorkOrderPage />,
-      },
-      {
-        path: 'workorder',
-        element: <WorkOrderPage />,
+        path: "workorder",
+        children: [
+          {
+            index: true, // /workorder - หน้าว่าง
+            element: <WorkOrderPage />,
+          },
+          {
+            path: "prework", // /workorder/prework
+            element: <PreWorkOrderPage />,
+          },
+          {
+            path: "activity", // /workorder/activity
+            element: <ActivityWorkOrderPage />,
+          },
+          {
+            path: "group", // /workorder/group
+            element: <WorkOrderGroupPage />,
+          },
+          {
+            path: "history", // /workorder/history
+            element: <HistoricalWorkOrderPage/>
+          },
+        ],
       },
     ],
   },
   {
-    path: '*',
+    path: "*",
     element: (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <div className="text-center">

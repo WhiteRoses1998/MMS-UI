@@ -1,140 +1,73 @@
 // src/pages/WorkOrderPage.tsx
-import { useState } from "react";
-import WorkOrderTable from "@/features/workorder/components/WorkOrderTable";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogClose,
-} from "@/components/ui/dialog";
-import WorkOrderHeader from "@/features/workorder/components/WorkOrderHeader";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import GeneralTab from "@/features/workorder/tabs/GeneralTab";
-import PrepareTab from "@/features/workorder/tabs/PrepareTab";
-import ActivityTab from "@/features/workorder/tabs/ActivityTab";
-import ReportTab from "@/features/workorder/tabs/ReportTab";
-import { WorkOrder } from "@/features/workorder/types";
-import { X } from "lucide-react";
-import { Button } from "@/components/ui";
+import { ClipboardList } from 'lucide-react';
 
 export default function WorkOrderPage() {
-  const [selectedWorkOrder, setSelectedWorkOrder] = useState<WorkOrder | null>(
-    null,
-  );
-
-  const handleAcceptJob = () => {
-    console.log("Accept Job for:", selectedWorkOrder?.id);
-    // เรียก API หรือเปลี่ยน status ที่นี่
-  };
-
-  const handleSelect = (order: WorkOrder) => {
-    setSelectedWorkOrder(order);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedWorkOrder(null);
-  };
-
-  const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      setSelectedWorkOrder(null);
-    }
-  };
-
   return (
-    <div className="p-6 space-y-6">
-      <WorkOrderTable onSelect={handleSelect} />
+    <div className="flex items-center justify-center min-h-[calc(100vh-100px)] bg-gray-50">
+      <div className="text-center max-w-md mx-auto p-8">
+        {/* Icon */}
+        <div className="mb-6">
+          <ClipboardList 
+            size={64} 
+            className="mx-auto text-teal-600 opacity-60" 
+            strokeWidth={1.5}
+          />
+        </div>
 
-      <Dialog open={!!selectedWorkOrder} onOpenChange={handleOpenChange}>
-        <DialogContent className="max-w-[98vw] h-[96vh] p-0 overflow-hidden rounded-none shadow-2xl border-0">
-          {/* Header */}
-          <DialogHeader className="px-8 py-4 bg-teal-700 text-white flex flex-row items-center justify-between border-b-0">
-            <DialogTitle className="text-xl font-medium tracking-tight">  
-              Prepare Separate Work Order
-            </DialogTitle>
-            <DialogClose asChild>
-              <button className="p-1 rounded hover:bg-teal-600 transition-colors">
-                <X size={24} className="text-white" />
-              </button>
-            </DialogClose>
-          </DialogHeader>
+        {/* Title */}
+        <h2 className="text-2xl font-semibold text-gray-800 mb-3">
+          Work Order Management
+        </h2>
 
-          {/* Content */}
-          <div className="flex-1 overflow-y-auto bg-white">
-            {/* ใช้ WorkOrderHeader component */}
-            <WorkOrderHeader
-              workOrder={selectedWorkOrder!}
-              onAcceptJob={handleAcceptJob}
-            />
+        {/* Description */}
+        <p className="text-gray-500 mb-8 leading-relaxed">
+          กรุณาเลือกประเภทของ Work Order จากเมนูด้านซ้าย
+          <br />
+          เพื่อเริ่มต้นจัดการงาน
+        </p>
 
-            {/* Tabs Section */}
-            <div className="px-8 py-6">
-              <Tabs defaultValue="general" className="w-full">
-                <TabsList className="w-full grid grid-cols-8 bg-white border-b border-gray-300 p-0 h-auto rounded-none mb-6">
-                  <TabsTrigger
-                    value="general"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-teal-600 data-[state=active]:text-teal-700 data-[state=active]:bg-teal-50 px-4 py-3 text-sm font-medium"
-                  >
-                    General
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="prepare"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-teal-600 data-[state=active]:text-teal-700 data-[state=active]:bg-teal-50 px-4 py-3 text-sm font-medium"
-                  >
-                    Prepare
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="activity"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-teal-600 data-[state=active]:text-teal-700 data-[state=active]:bg-teal-50 px-4 py-3 text-sm font-medium"
-                  >
-                    Activity
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="report"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-teal-600 data-[state=active]:text-teal-700 data-[state=active]:bg-teal-50 px-4 py-3 text-sm font-medium"
-                  >
-                    Report In
-                  </TabsTrigger>
-                </TabsList>
+        {/* Menu Options */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3 className="text-sm font-medium text-gray-700 mb-4">
+            เมนูที่สามารถเลือกได้:
+          </h3>
+          <ul className="space-y-3 text-left">
+            <li className="flex items-start">
+              <span className="text-teal-600 mr-2">•</span>
+              <div>
+                <div className="font-medium text-gray-700">Pre Work Order</div>
+                <div className="text-xs text-gray-500">จัดการใบงานก่อนเริ่มงาน</div>
+              </div>
+            </li>
+            <li className="flex items-start">
+              <span className="text-teal-600 mr-2">•</span>
+              <div>
+                <div className="font-medium text-gray-700">Activity Work Order</div>
+                <div className="text-xs text-gray-500">ติดตามงานที่กำลังดำเนินการ</div>
+              </div>
+            </li>
+            <li className="flex items-start">
+              <span className="text-teal-600 mr-2">•</span>
+              <div>
+                <div className="font-medium text-gray-700">Work Order Group</div>
+                <div className="text-xs text-gray-500">จัดกลุ่มใบงาน</div>
+              </div>
+            </li>
+            <li className="flex items-start">
+              <span className="text-teal-600 mr-2">•</span>
+              <div>
+                <div className="font-medium text-gray-700">Historical Work Order</div>
+                <div className="text-xs text-gray-500">ดูประวัติงานที่เสร็จแล้ว</div>
+              </div>
+            </li>
+          </ul>
+        </div>
 
-                <TabsContent value="general" className="mt-0">
-                  <GeneralTab workOrder={selectedWorkOrder!} />
-                </TabsContent>
-
-                <TabsContent value="prepare" className="mt-0">
-                  <PrepareTab workOrder={selectedWorkOrder!} />
-                </TabsContent>
-
-                <TabsContent value="activity" className="mt-0">
-                  <ActivityTab workOrder={selectedWorkOrder!} />
-                </TabsContent>
-
-                <TabsContent value="report" className="mt-0">
-                  <ReportTab workOrder={selectedWorkOrder!} />
-                </TabsContent>
-              </Tabs>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <div className="px-8 py-4 border-t bg-white flex justify-end gap-3">
-            <Button
-              variant="outline"
-              onClick={handleCloseModal}
-              className="px-6 py-2 border-teal-600 text-teal-600 hover:bg-teal-50"
-            >
-              Close
-            </Button>
-            <Button
-              variant="default"
-              className="px-6 py-2 bg-teal-600 hover:bg-teal-700 text-white"
-            >
-              Save change
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        {/* Hint */}
+        <p className="text-xs text-gray-400 mt-6">
+          💡 Tip: คลิกที่ "Work Order" ในเมนูด้านซ้ายเพื่อดูรายการย่อย
+        </p>
+      </div>
     </div>
   );
 }

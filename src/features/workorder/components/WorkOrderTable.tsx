@@ -1,312 +1,228 @@
-// WorkOrderTable.tsx
-import { useSidebar } from "@/hooks/useSidebar";
-import SearchBox from "@/components/common/SearchBox";
-import { WorkOrder } from "@/features/workorder/types";
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Button,
+} from "@/components/ui";
+import { cn } from "@/lib/cn";
+import { WorkOrder } from "@/features/WorkOrder/types";
+import { SearchFilters } from "@/components/common/SearchBox";
 
-interface Props {
-  onSelect: (order: WorkOrder) => void;
+interface WorkOrderTableProps {
+  data: WorkOrder[];
+  mode: "active" | "history";
+  onSelect?: (order: WorkOrder) => void;
+  filters?: SearchFilters;
 }
 
-const mockWorkOrders: WorkOrder[] = [
-  {
-    id: "1",
-    breakdown: false,
-    usageAlert: false,
-    workOrder: "080017",
-    faultDesc: "เครื่อง TOD ไปรแกรม MTS ไม่สมบูรณ์",
-    errorDesc: "RP อาคารสาม-เครื่อง TOD ไป",
-    equipment: "999999921",
-    symptom: "STW31",
-    customerCode: "01749 - ณรงค์ชัย มณฑุ",
-    workMaster: "",
-    workType: "CM",
-    department: "PTET00",
-    planStartDate: "06-08-2025",
-    planFinishDate: "06-08-2025",
-    status: "Work Done",
-    woGenDate: "06-08-2025 16:26:00",
-    priority: "งานรองคำสลำเนื้องามาขใน 1 วน",
-    planRespondMins: "999999",
-    respondMins: null,
-    siteId: "DMT",
-  },
-  {
-    id: "2",
-    breakdown: true,
-    usageAlert: true,
-    workOrder: "080018",
-    faultDesc: "วันที่ 30-7-68 สายพลาสติก ชายเคอร์เบลูง ข้อ 6.21 กับ 6.18 ยอดเงียงเลอนไม่ตรงกัน",
-    errorDesc: "",
-    equipment: "999999921",
-    symptom: "STW31",
-    customerCode: "01693 - ณัฐวสี จันทร์เจ้ม",
-    workMaster: "",
-    workType: "CM",
-    department: "PTET00",
-    planStartDate: "06-08-2025",
-    planFinishDate: "06-08-2025",
-    status: "Work Done",
-    woGenDate: "06-08-2025 16:28:00",
-    priority: "งานรองคำสลำเนื้องามาขใน 1 วน",
-    planRespondMins: "999999",
-    respondMins: null,
-    siteId: "DMT",
-  },
-  {
-    id: "3",
-    breakdown: false,
-    usageAlert: true,
-    workOrder: "080019",
-    faultDesc: "ระบบไฟฟ้าขัดข้อง ไม่สามารถเปิดเครื่องได้",
-    errorDesc: "ตรวจสอบแล้วพบว่า Circuit Breaker trip",
-    equipment: "999999922",
-    symptom: "STW32",
-    customerCode: "01750 - สมชาย วงศ์ใหญ่",
-    workMaster: "WM001",
-    workType: "PM",
-    department: "PTET01",
-    planStartDate: "07-08-2025",
-    planFinishDate: "07-08-2025",
-    status: "In Progress",
-    woGenDate: "06-08-2025 17:30:00",
-    priority: "งานเร่งด่วนต้องแก้ไขภายใน 4 ชั่วโมง",
-    planRespondMins: "240",
-    respondMins: "180",
-    siteId: "BKK",
-  },
-  {
-    id: "4",
-    breakdown: true,
-    usageAlert: false,
-    workOrder: "080020",
-    faultDesc: "มอเตอร์มีเสียงดังผิดปกติ และมีอุณหภูมิสูง",
-    errorDesc: "Bearing อาจชำรุด ต้องเปลี่ยน",
-    equipment: "999999923",
-    symptom: "STW33",
-    customerCode: "01751 - วิชัย แสงสว่าง",
-    workMaster: "WM002",
-    workType: "CM",
-    department: "PTET02",
-    planStartDate: "07-08-2025",
-    planFinishDate: "08-08-2025",
-    status: "Waiting",
-    woGenDate: "06-08-2025 18:45:00",
-    priority: "งานปกติต้องดำเนินการภายใน 2 วัน",
-    planRespondMins: "2880",
-    respondMins: null,
-    siteId: "CNX",
-  },
-  {
-    id: "5",
-    breakdown: false,
-    usageAlert: false,
-    workOrder: "080021",
-    faultDesc: "ตรวจสอบประจำปี Preventive Maintenance",
-    errorDesc: "",
-    equipment: "999999924",
-    symptom: "STW34",
-    customerCode: "01752 - นภา สุขสันต์",
-    workMaster: "WM003",
-    workType: "PM",
-    department: "PTET00",
-    planStartDate: "08-08-2025",
-    planFinishDate: "09-08-2025",
-    status: "Scheduled",
-    woGenDate: "06-08-2025 19:00:00",
-    priority: "งานตามแผนประจำปี",
-    planRespondMins: "5760",
-    respondMins: null,
-    siteId: "DMT",
-  },
-  {
-    id: "6",
-    breakdown: true,
-    usageAlert: true,
-    workOrder: "080022",
-    faultDesc: "เครื่องหยุดทำงานกระทันหัน ไม่มีสัญญาณไฟเลย",
-    errorDesc: "ตรวจพบว่า Main Power Supply ขัดข้อง",
-    equipment: "999999925",
-    symptom: "STW35",
-    customerCode: "01753 - ประยุทธ สมบูรณ์",
-    workMaster: "",
-    workType: "CM",
-    department: "PTET03",
-    planStartDate: "06-08-2025",
-    planFinishDate: "06-08-2025",
-    status: "Departure",
-    woGenDate: "06-08-2025 20:15:00",
-    priority: "งานฉุกเฉินต้องแก้ไขทันที ภายใน 2 ชั่วโมง",
-    planRespondMins: "120",
-    respondMins: "90",
-    siteId: "PKT",
-  },
+/* ===== Column Config ===== */
+type Column = {
+  key: keyof WorkOrder;
+  label: string;
+};
+
+const ACTIVE_COLUMNS: Column[] = [
+  { key: "workOrder", label: "Work Order" },
+  { key: "faultDesc", label: "Fault Description" },
+  { key: "errorDesc", label: "Error Description" },
+  { key: "equipment", label: "Equipment" },
+  { key: "symptom", label: "Symptom" },
+  { key: "customerCode", label: "Customer Code" },
+  { key: "workMaster", label: "Work Master" },
+  { key: "workType", label: "Work Type" },
+  { key: "department", label: "Department" },
+  { key: "planStartDate", label: "Plan Start" },
+  { key: "planFinishDate", label: "Plan Finish" },
+  { key: "status", label: "Status" },
+  { key: "woGenDate", label: "WO Gen Date" },
+  { key: "priority", label: "Priority" },
+  { key: "siteId", label: "Site ID" },
 ];
 
-export default function WorkOrderTable({ onSelect }: Props) {
-  const { isOpen: isSidebarOpen } = useSidebar();
+const HISTORY_COLUMNS: Column[] = [
+  { key: "workOrder", label: "Work Order" },
+  { key: "workOrderGroup", label: "Work Order Group" },
+  { key: "faultDescription", label: "Fault Description" },
+  { key: "equipment", label: "Equipment" },
+  { key: "workMaster", label: "Work Master" },
+  { key: "workType", label: "Work Type" },
+  { key: "department", label: "Department" },
+  { key: "status", label: "WO Gen Status" },
+  { key: "woGenDate", label: "Date" },
+  { key: "siteId", label: "Site ID" },
+];
 
-  const displayedOrders = mockWorkOrders;
+/* ===== Status Badge ===== */
+const getStatusBadge = (status: string, mode: "active" | "history") => {
+  const s = status.toLowerCase();
+  if (mode === "history") {
+    return s === "close job"
+      ? "bg-red-100 text-red-800"
+      : "bg-gray-100 text-gray-800";
+  }
+  if (s.includes("done") || s === "completed" || s === "close job")
+    return "bg-teal-600 text-white";
+  if (s.includes("progress") || s === "departure")
+    return "bg-blue-500 text-white";
+  if (s.includes("waiting") || s === "open" || s === "scheduled")
+    return "bg-orange-400 text-white";
+  return "bg-gray-500 text-white";
+};
 
-  const tableContainerWidth = isSidebarOpen 
-    ? 'calc(100vw - 230px - 3rem)' 
-    : 'calc(100vw - 70px - 3rem)';
+/* ===== Component ===== */
+export default function UnifiedWorkOrderTable({
+  data,
+  mode,
+  onSelect,
+  filters = { workOrder: "", equipment: "", siteId: "" },
+}: WorkOrderTableProps) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(10);
 
-  const getStatusBadge = (status: string) => {
-    const lower = status.toLowerCase();
-    if (lower.includes("done") || lower === "completed") return "bg-teal-600 text-white";
-    if (lower.includes("progress") || lower === "departure") return "bg-blue-500 text-white";
-    if (lower.includes("waiting") || lower.includes("pending") || lower === "scheduled") 
-      return "bg-orange-400 text-white";
-    return "bg-gray-500 text-white";
-  };
+  const columns = mode === "active" ? ACTIVE_COLUMNS : HISTORY_COLUMNS;
+
+  const filteredData = data.filter((item) => {
+    if (
+      filters.workOrder &&
+      !item.workOrder?.toLowerCase().includes(filters.workOrder.toLowerCase())
+    )
+      return false;
+
+    if (
+      filters.equipment &&
+      item.equipment?.toLowerCase() !== filters.equipment.toLowerCase()
+    )
+      return false;
+
+    if (
+      filters.siteId &&
+      !item.siteId?.toLowerCase().includes(filters.siteId.toLowerCase())
+    )
+      return false;
+
+    return true;
+  });
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters]);
+
+  const totalEntries = filteredData.length;
+  const totalPages = Math.ceil(totalEntries / entriesPerPage);
+  const start = (currentPage - 1) * entriesPerPage;
+  const currentData = filteredData.slice(start, start + entriesPerPage);
 
   return (
-    <div className="p-5 bg-gray-50 min-h-screen space-y-6">
-      {/* Search Box */}
-      <SearchBox />
-
-      {/* Table Container */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 max-w-full overflow-hidden">
-        <div className="p-4 border-b bg-gray-50 flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-800">รายการ Work Order</h2>
-            <p className="text-xs text-gray-500 mt-1">
-              ⬅️➡️ เลื่อนซ้าย-ขวาเพื่อดูคอลัมน์ทั้งหมด | ⬆️⬇️ เลื่อนขึ้น-ลงเพื่อดูข้อมูลเพิ่มเติม
-            </p>
-          </div>
-        </div>
-
-        <div 
-          className="overflow-auto border transition-all duration-300"
-          style={{ 
-            maxHeight: '450px',
-            maxWidth: tableContainerWidth,
-          }}
-        >
-          <table className="border-collapse text-sm table-fixed" style={{ minWidth: '1400px' }}>
-            <thead>
-              <tr className="bg-cyan-50 border-b sticky top-0 z-10">
-                <th className="px-3 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '60px' }}>
-                  #
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '120px' }}>
-                  Work Order
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '300px' }}>
-                  Fault Description
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '250px' }}>
-                  Error Description
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '120px' }}>
-                  Equipment
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '100px' }}>
-                  Symptom
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '200px' }}>
-                  Customer Code
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '130px' }}>
-                  Work Master
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '100px' }}>
-                  Work Type
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '120px' }}>
-                  Department
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '130px' }}>
-                  Plan Start
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '130px' }}>
-                  Plan Finish
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '120px' }}>
-                  Status
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '170px' }}>
-                  WO Gen Date
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50 border-r" style={{ minWidth: '280px' }}>
-                  Priority
-                </th>
-                <th className="px-4 py-3 text-left font-semibold text-gray-700 bg-cyan-50" style={{ minWidth: '90px' }}>
-                  Site ID
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {displayedOrders.map((row, index) => (
-                <tr
-                  key={row.workOrder}
-                  onClick={() => onSelect(row)}
-                  className={`border-b hover:bg-teal-50 cursor-pointer transition-colors ${
-                    index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                  }`}
+    <div className="bg-white border border-gray-200 rounded-md shadow-sm p-4">
+      <div className="overflow-x-auto border border-gray-300 rounded-md">
+        <Table className="table-fixed w-full">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="bg-[#d1ecf1] border px-3 py-3">#</TableHead>
+              {columns.map((c) => (
+                <TableHead
+                  key={c.key as string}
+                  className="bg-[#d1ecf1] border px-3 py-3"
                 >
-                  <td className="px-3 py-3 border-r">{index + 1}</td>
-                  <td className="px-4 py-3 font-medium whitespace-nowrap border-r">{row.workOrder}</td>
-                  <td className="px-4 py-3 border-r">
-                    <div className="max-w-[300px] truncate" title={row.faultDesc}>
-                      {row.faultDesc}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 border-r">
-                    <div className="max-w-[250px] truncate" title={row.errorDesc}>
-                      {row.errorDesc || '-'}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap border-r">{row.equipment}</td>
-                  <td className="px-4 py-3 whitespace-nowrap border-r">{row.symptom}</td>
-                  <td className="px-4 py-3 border-r">
-                    <div className="max-w-[200px] truncate" title={row.customerCode}>
-                      {row.customerCode}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap border-r">{row.workMaster || '-'}</td>
-                  <td className="px-4 py-3 border-r">
-                    <span className="inline-block px-2 py-1 bg-red-500 text-white rounded text-xs font-bold whitespace-nowrap">
-                      {row.workType}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap border-r">{row.department}</td>
-                  <td className="px-4 py-3 whitespace-nowrap border-r">{row.planStartDate}</td>
-                  <td className="px-4 py-3 whitespace-nowrap border-r">{row.planFinishDate}</td>
-                  <td className="px-4 py-3 border-r">
-                    <span className={`inline-block px-2 py-1 rounded text-xs font-medium whitespace-nowrap ${getStatusBadge(row.status)}`}>
-                      {row.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap border-r">{row.woGenDate}</td>
-                  <td className="px-4 py-3 border-r">
-                    <div className="max-w-[280px] truncate" title={row.priority}>
-                      {row.priority}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 whitespace-nowrap">{row.siteId}</td>
-                </tr>
+                  {c.label}
+                </TableHead>
               ))}
-            </tbody>
-          </table>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {currentData.map((row, i) => (
+              <TableRow
+                key={row.id}
+                onClick={() => onSelect?.(row)}
+                className="cursor-pointer hover:bg-gray-200"
+              >
+                <TableCell className="border px-2 py-2">
+                  {start + i + 1}
+                </TableCell>
+
+                {columns.map((c) => {
+                  const value = row[c.key];
+                  if (c.key === "status") {
+                    return (
+                      <TableCell key={c.key as string} className="border px-2 py-2">
+                        <span
+                          className={cn(
+                            "px-3 py-1 text-xs rounded-full",
+                            getStatusBadge(String(value ?? ""), mode)
+                          )}
+                        >
+                          {value ?? "-"}
+                        </span>
+                      </TableCell>
+                    );
+                  }
+                  return (
+                    <TableCell
+                      key={c.key as string}
+                      className="border px-2 py-2 truncate"
+                      title={String(value ?? "-")}
+                    >
+                      {String(value ?? "-")}
+                    </TableCell>
+                  );
+                })}
+              </TableRow>
+            ))}
+
+            {currentData.length === 0 && (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length + 1}
+                  className="text-center py-8 text-gray-500 border"
+                >
+                  ไม่พบข้อมูล
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Pagination */}
+      <div className="flex justify-between items-center mt-4 text-sm">
+        <div>
+          Showing {totalEntries ? start + 1 : 0} to{" "}
+          {Math.min(start + entriesPerPage, totalEntries)} of {totalEntries}
         </div>
 
-        {/* Pagination */}
-        <div className="p-4 border-t flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-700 bg-gray-50">
-          <div>
-            แสดง 1 ถึง {mockWorkOrders.length} จาก {mockWorkOrders.length} รายการ
-          </div>
-          <div className="flex gap-1">
-            <button className="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50 text-teal-600">
-              ก่อนหน้า
-            </button>
-            <button className="px-3 py-1 bg-teal-600 text-white rounded-md">1</button>
-            <button className="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50">2</button>
-            <button className="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50">...</button>
-            <button className="px-3 py-1 border border-gray-300 rounded-md hover:bg-gray-50 text-teal-600">
-              ถัดไป
-            </button>
-          </div>
+        <div className="flex gap-2 items-center">
+          <select
+            value={entriesPerPage}
+            onChange={(e) => setEntriesPerPage(Number(e.target.value))}
+            className="border rounded px-2 py-1"
+          >
+            {[5, 10, 20, 50].map((n) => (
+              <option key={n} value={n}>
+                {n}
+              </option>
+            ))}
+          </select>
+
+          <Button
+            size="sm"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => p - 1)}
+          >
+            Prev
+          </Button>
+
+          <Button
+            size="sm"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((p) => p + 1)}
+          >
+            Next
+          </Button>
         </div>
       </div>
     </div>

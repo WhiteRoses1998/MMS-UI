@@ -1,6 +1,6 @@
 import { useState } from "react";
-import PreWorkTable from "@/features/prework/components/PreWorkTable";
-import PreWorkModal from "@/features/prework/components/modal/PreWorkModal";
+import PreWorkTable from "@/features/PreWorkOrder/components/PreWorkTable";
+import PreWorkModal from "@/features/PreWorkOrder/components/modal/PreWorkModal";
 
 export default function PreWorkOrderPage() {
   const [selectedJob, setSelectedJob] = useState<any | null>(null);
@@ -8,8 +8,6 @@ export default function PreWorkOrderPage() {
 
   return (
     <div style={{ padding: 20 }}>
-      <h2>PreWork Order</h2>
-
       <PreWorkTable
         onSelect={(job) => setSelectedJob(job)}
         isSidebarOpen={isSidebarOpen}  // ส่ง sidebar state เข้าไป
