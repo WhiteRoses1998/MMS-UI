@@ -4,7 +4,7 @@ import {
   ChevronDown, 
   ChevronRight, 
   X, 
-  LayoutDashboard, 
+  // LayoutDashboard, 
   ClipboardList, 
   Lock, 
   FileText, 
@@ -17,11 +17,11 @@ import { cn } from '@/lib/cn';
 import { useState, useEffect } from 'react';
 
 const menuItems = [
-  { 
-    label: 'Dashboard', 
-    path: '/dashboard',
-    icon: LayoutDashboard
-  },
+  // { 
+  //   label: 'Dashboard', 
+  //   path: '/dashboard',
+  //   icon: LayoutDashboard
+  // },
   {
     label: 'Work Order',
     path: '/workorder', // หน้าว่าง - จะ redirect ไป /workorder หรือแสดงข้อความให้เลือก submenu
@@ -29,7 +29,6 @@ const menuItems = [
     submenu: [
       { label: 'Pre Work Order', path: '/workorder/prework', icon: FileText },
       { label: 'Activity Work Order', path: '/workorder/activity', icon: Activity },
-      { label: 'Work Order Group', path: '/workorder/group', icon: Layers },
       { label: 'Historical Work Order', path: '/workorder/history', icon: History },
     ]
   },

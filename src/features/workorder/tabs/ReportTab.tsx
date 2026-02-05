@@ -53,48 +53,6 @@ export default function ReportTab({ workOrder }: { workOrder: WorkOrder }) {
               <option>Please Select</option>
             </select>
           </div>
-
-          {/* Photos - ปรับขนาดกล่องให้เล็กลงและ fix ขนาด */}
-          <div className="grid grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Photo before repair</label>
-              <button className="mt-1 bg-teal-500 text-white px-3 py-1.5 text-sm rounded">
-                อัปโหลดรูป
-              </button>
-              <div 
-                className="mt-2 w-28 h-28 border border-gray-400 bg-gray-50 flex items-center justify-center overflow-hidden rounded"
-              >
-                {/* เมื่อมีรูปอัปโหลด จะ render <img> แทน div ว่างนี้ */}
-                <span className="text-gray-400 text-xs text-center">ยังไม่มีรูป</span>
-                {/* ตัวอย่างถ้ามีรูปแล้ว: 
-                <img 
-                  src={uploadedImageUrl} 
-                  alt="Before repair" 
-                  className="w-full h-full object-contain" 
-                /> 
-                */}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Photo after repair</label>
-              <button className="mt-1 bg-teal-500 text-white px-3 py-1.5 text-sm rounded">
-                อัปโหลดรูป
-              </button>
-              <div 
-                className="mt-2 w-28 h-28 border border-gray-400 bg-gray-50 flex items-center justify-center overflow-hidden rounded"
-              >
-                <span className="text-gray-400 text-xs text-center">ยังไม่มีรูป</span>
-                {/* ตัวอย่างถ้ามีรูปแล้ว: 
-                <img 
-                  src={uploadedImageUrl} 
-                  alt="After repair" 
-                  className="w-full h-full object-contain" 
-                /> 
-                */}
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 

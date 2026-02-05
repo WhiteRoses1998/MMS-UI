@@ -2,12 +2,11 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
 import Login from "@/pages/Login";
-import Dashboard from "@/pages/Dashboard";
+// import Dashboard from "@/pages/Dashboard";
 import ChangePassword from "@/pages/ChangePassword";
 import WorkOrderPage from "@/pages/WorkOrderPage"; // หน้าว่าง (แก้จาก ActivityWorkOrderPage)
 import PreWorkOrderPage from "@/features/PreWorkOrder/pages/PreWorkOrderPage";
 import ActivityWorkOrderPage from "@/features/WorkOrder/pages/ActivityWorkOrderPage";
-import WorkOrderGroupPage from "@/features/GroupWorkOrder/page/GroupWorkOrderPage";
 import HistoricalWorkOrderPage from "@/features/WorkOrder/pages/HistoricalWorkOrderPage";
 import React from "react";
 
@@ -40,12 +39,12 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="/dashboard" replace />, // redirect / -> /dashboard
+        element: <Navigate to="/WorkOrderPage" replace />, //หน้าแรกเป็นหน้า WorkOrder
       },
-      {
-        path: "dashboard",
-        element: <Dashboard />,
-      },
+      // {
+      //   path: "dashboard",
+      //   element: <Dashboard />, ///ซ่อนไว้ก่อน ยังไม่ได้ใช้
+      // },
       {
         path: "change-password",
         element: <ChangePassword />,
@@ -65,10 +64,6 @@ const router = createBrowserRouter([
           {
             path: "activity", // /workorder/activity
             element: <ActivityWorkOrderPage />,
-          },
-          {
-            path: "group", // /workorder/group
-            element: <WorkOrderGroupPage />,
           },
           {
             path: "history", // /workorder/history
