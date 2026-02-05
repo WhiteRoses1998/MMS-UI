@@ -1,6 +1,16 @@
-export interface PreWork {
+// src/types/prework.ts
+export interface PreWorkJob {
   id: string;
-  workOrderId?: string;
-  description?: string;
-  status?: string;
+  workOrder: string;
+  reportedDate: string;
+  reportBy: string;
+  shortDescription: string;
+  description: string;
+  department: string;
+  equipment: string;
+  errorSymptom: string;
+  customerCode: string;
+  requiredStart: string;
+  requiredFinish: string;
+  siteId: string;
 }

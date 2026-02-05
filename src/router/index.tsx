@@ -39,7 +39,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="/WorkOrderPage" replace />, //หน้าแรกเป็นหน้า WorkOrder
+        element: <Navigate to="/workorder" replace />, //หน้าแรกเป็นหน้า WorkOrder
       },
       // {
       //   path: "dashboard",

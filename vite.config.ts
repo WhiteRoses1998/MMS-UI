@@ -27,7 +27,7 @@ export default defineConfig({
     include: [
       '@/components/layout/AppLayout',
       '@/pages/Login',
-      '@/pages/Dashboard',
+      // '@/pages/Dashboard',
       '@/pages/ChangePassword',
       '@/pages/WorkOrderPage',
     ],
