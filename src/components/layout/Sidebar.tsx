@@ -85,7 +85,7 @@ export default function Sidebar() {
         <div className="text-xl font-bold">MMS</div>
         <button 
           onClick={toggle} 
-          className="p-2 rounded hover:bg-teal-800 transition-colors lg:hidden"
+          className="p-2 rounded hover:bg-teal-800 transition-colors"
           aria-label="Close sidebar"
         >
           <X size={18} />

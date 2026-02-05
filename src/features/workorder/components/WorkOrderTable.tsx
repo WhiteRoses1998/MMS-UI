@@ -122,11 +122,11 @@ export default function UnifiedWorkOrderTable({
         <Table className="table-fixed w-full">
           <TableHeader>
             <TableRow>
-              <TableHead className="bg-[#d1ecf1] border px-3 py-3">#</TableHead>
+              <TableHead className="bg-[#d1ecf1] border px-3 py-3 font-bold">#</TableHead>
               {columns.map((c) => (
                 <TableHead
                   key={c.key as string}
-                  className="bg-[#d1ecf1] border px-3 py-3"
+                  className="bg-[#d1ecf1] border px-3 py-3 font-bold"
                 >
                   {c.label}
                 </TableHead>

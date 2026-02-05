@@ -6,7 +6,6 @@ import WorkOrderInfoSection from '@/features/PreWorkOrder/components/forms/WorkO
 import FaultInfoSection from '@/features/PreWorkOrder/components/forms/FaultInfoSection';
 import MandatorySection from '@/features/PreWorkOrder/components/forms/MandatorySection';
 import FaultCodeSection from '@/features/PreWorkOrder/components/forms/FaultCodeSection';
-import AttachmentSection from '@/features/PreWorkOrder/components/forms/AttachmentSection';
 
 interface Props {
   preWorkId: string;
@@ -24,7 +23,6 @@ export default function PreWorkModal({ preWorkId, onClose }: Props) {
           <FaultInfoSection />
           <MandatorySection />
           <FaultCodeSection />
-          <AttachmentSection />
         </PreWorkModalLayout>
 
         <PreWorkModalFooter onClose={onClose} />
