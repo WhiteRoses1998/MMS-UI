@@ -15,6 +15,10 @@ const Login: React.FC = () => {
     e.preventDefault();
     setError(null);
 
+    // ✅ ล้างของเก่าทิ้งก่อน
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
     if (!username.trim() || !password.trim()) {
       setError("กรุณากรอก Username และ Password ให้ครบ");
       return;

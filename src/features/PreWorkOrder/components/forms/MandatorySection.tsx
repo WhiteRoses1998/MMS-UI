@@ -1,39 +1,59 @@
-export default function MandatorySection() {
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui";
+
+interface Props {
+  data: any;
+  priorities: any[];
+  jobStatuses: any[];
+  onChange: (key: string, value: any) => void;
+}
+
+export default function MandatorySection({
+  data,
+  priorities,
+  jobStatuses,
+  onChange,
+}: Props) {
   return (
-    <section className="space-y-4">
-      <h2 className="text-lg font-bold text-gray-800 border-b-2 border-gray-300 pb-2">
-        Mandatory
-      </h2>
+    <div className="space-y-4">
+      <h3 className="font-semibold text-lg">Mandatory</h3>
 
-      <div className="grid grid-cols-3 gap-3">
-        <div>
-          <label className="block text-xs font-bold text-gray-700 mb-1">
-            Report By
-          </label>
-          <select className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500">
-            <option>01283-ธีรพล ศรีสวา</option>
-          </select>
-        </div>
+      <Select
+        value={data.priority_id || ""}
+        onValueChange={(v) => onChange("priority_id", v)}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Priority" />
+        </SelectTrigger>
+        <SelectContent>
+          {priorities.map((p) => (
+            <SelectItem key={p.id} value={String(p.id)}>
+              {p.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
-        <div>
-          <label className="block text-xs font-bold text-gray-700 mb-1">
-            Short Description
-          </label>
-          <input
-            type="text"
-            className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-xs font-bold text-gray-700 mb-1">
-            Department
-          </label>
-          <select className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500">
-            <option>FPA000-แผนกธุรการและจัดซื้อ</option>
-          </select>
-        </div>
-      </div>
-    </section>
+      <Select
+        value={data.job_status_id || ""}
+        onValueChange={(v) => onChange("job_status_id", v)}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Job Status" />
+        </SelectTrigger>
+        <SelectContent>
+          {jobStatuses.map((s) => (
+            <SelectItem key={s.id} value={String(s.id)}>
+              {s.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
   );
 }

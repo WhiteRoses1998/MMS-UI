@@ -1,57 +1,40 @@
-export default function WorkOrderInfoSection() {
+import { Input } from "@/components/ui";
+
+interface Props {
+  data: any;
+  onChange: (key: string, value: any) => void;
+}
+
+export default function WorkOrderInfoSection({ data, onChange }: Props) {
   return (
-    <section className="space-y-4">
-      <h2 className="text-lg font-bold text-gray-800 border-b-2 border-gray-300 pb-2">
-        Work Order
-      </h2>
+    <div className="space-y-4">
+      <h3 className="font-semibold text-lg">Work Order Information</h3>
 
-      <div className="grid grid-cols-4 gap-3">
-        <div>
-          <label className="block text-xs font-bold text-gray-700 mb-1">
-            Work Order
-          </label>
-          <input
-            type="text"
-            value="080319"
-            readOnly
-            className="w-full px-2 py-1.5 text-sm bg-gray-100 border border-gray-300 rounded"
-          />
-        </div>
+      <div className="grid grid-cols-2 gap-4">
+        <Input
+          placeholder="Work Order No."
+          value={data.work_order_no || ""}
+          onChange={(e) => onChange("work_order_no", e.target.value)}
+        />
 
-        <div>
-          <label className="block text-xs font-bold text-gray-700 mb-1">
-            Ref No.
-          </label>
-          <input
-            type="text"
-            className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
-          />
-        </div>
+        <Input
+          placeholder="Job Reference"
+          value={data.job_reference || ""}
+          onChange={(e) => onChange("job_reference", e.target.value)}
+        />
 
-        <div>
-          <label className="block text-xs font-bold text-gray-700 mb-1">
-            WO Gen Date
-          </label>
-          <input
-            type="text"
-            value="19/08/2025"
-            readOnly
-            className="w-full px-2 py-1.5 text-sm bg-gray-100 border border-gray-300 rounded"
-          />
-        </div>
+        <Input
+          placeholder="Department"
+          value={data.department || ""}
+          onChange={(e) => onChange("department", e.target.value)}
+        />
 
-        <div>
-          <label className="block text-xs font-bold text-gray-700 mb-1">
-            Time
-          </label>
-          <input
-            type="text"
-            value="10:37"
-            readOnly
-            className="w-full px-2 py-1.5 text-sm bg-gray-100 border border-gray-300 rounded"
-          />
-        </div>
+        <Input
+          placeholder="Location"
+          value={data.location || ""}
+          onChange={(e) => onChange("location", e.target.value)}
+        />
       </div>
-    </section>
+    </div>
   );
 }

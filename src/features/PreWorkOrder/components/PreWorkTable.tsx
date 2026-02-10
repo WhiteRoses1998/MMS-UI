@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import SearchBox from "@/components/common/SearchBox";
-import { PreWorkJob } from "../types";
+import { PreWorkOrder } from "../types";
 
 interface PreWorkTableProps {
-  onSelect: (job: PreWorkJob) => void;
+  onSelect: (job: PreWorkOrder) => void;
   isSidebarOpen?: boolean;
 }
 
@@ -13,7 +13,7 @@ export default function PreWorkTable({
 }: PreWorkTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
-  const [data, setData] = useState<PreWorkJob[]>([]);
+  const [data, setData] = useState<PreWorkOrder[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,20 +24,30 @@ export default function PreWorkTable({
         setLoading(true);
         setError(null);
 
-        const res = await fetch("/api/work-orders/pre-work", {
-          credentials: "include",
+        const token = localStorage.getItem("token");
+        const res = await fetch("/api/work-orders/prework-list", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
 
+        console.log("✅ Response status:", res.status);
+
+        // ✅ แก้ไขตรงนี้: อ่านเป็น JSON ทีเดียว
         if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
+          const errorData = await res.json().catch(() => ({}));
+          console.error("❌ Error response:", errorData);
+          throw new Error(errorData.message || `HTTP ${res.status}`);
         }
 
         const json = await res.json();
-        // backend ควรส่ง { data: [...] }
+        console.log("✅ Data received:", json);
+
+        // backend ส่ง { data: [...] }
         setData(json.data ?? []);
       } catch (err: any) {
-        console.error(err);
-        setError("ไม่สามารถดึงข้อมูล PreWork ได้");
+        console.error("❌ Fetch error:", err);
+        setError(err.message || "ไม่สามารถดึงข้อมูล PreWork ได้");
       } finally {
         setLoading(false);
       }
@@ -76,7 +86,7 @@ export default function PreWorkTable({
             }}
           >
             {i}
-          </button>
+          </button>,
         );
       }
     } else {
@@ -99,7 +109,7 @@ export default function PreWorkTable({
             }}
           >
             {i}
-          </button>
+          </button>,
         );
       }
 
@@ -107,7 +117,7 @@ export default function PreWorkTable({
         pages.push(
           <span key="ellipsis" style={{ padding: "6px 12px" }}>
             ...
-          </span>
+          </span>,
         );
         pages.push(
           <button
@@ -116,7 +126,7 @@ export default function PreWorkTable({
             style={paginationButtonStyle}
           >
             {totalPages}
-          </button>
+          </button>,
         );
       }
     }
@@ -200,21 +210,17 @@ export default function PreWorkTable({
                 <thead style={{ backgroundColor: "#d1ecf1" }}>
                   <tr>
                     <th style={{ ...thStyle, width: "4%" }}>B/D</th>
-                    <th style={{ ...thStyle, width: "8%" }}>Work Order ▲</th>
-                    <th style={{ ...thStyle, width: "10%" }}>Reported Date</th>
-                    <th style={{ ...thStyle, width: "8%" }}>Report By</th>
-                    <th style={{ ...thStyle, width: "15%" }}>
+                    <th style={{ ...thStyle, width: "10%" }}>Work Order ▲</th>
+                    <th style={{ ...thStyle, width: "12%" }}>Reported Date</th>
+                    <th style={{ ...thStyle, width: "10%" }}>Report By</th>
+                    <th style={{ ...thStyle, width: "18%" }}>
                       Short Description
                     </th>
-                    <th style={{ ...thStyle, width: "8%" }}>Department</th>
-                    <th style={{ ...thStyle, width: "20%" }}>Equipment</th>
-                    <th style={{ ...thStyle, width: "12%" }}>Error Symptom</th>
-                    <th style={{ ...thStyle, width: "8%" }}>Customer Code</th>
-                    <th style={{ ...thStyle, width: "10%" }}>Required Start</th>
-                    <th style={{ ...thStyle, width: "10%" }}>
-                      Required Finish
-                    </th>
-                    <th style={{ ...thStyle, width: "7%" }}>Site ID</th>
+                    <th style={{ ...thStyle, width: "12%" }}>Department</th>
+                    <th style={{ ...thStyle, width: "15%" }}>Equipment</th>
+                    <th style={{ ...thStyle, width: "10%" }}>Error Symptom</th>
+                    <th style={{ ...thStyle, width: "9%" }}>Customer Code</th>
+                    <th style={{ ...thStyle, width: "8%" }}>Site ID</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -260,8 +266,6 @@ export default function PreWorkTable({
                       <td style={tdStyle}>{job.equipment}</td>
                       <td style={tdStyle}>{job.errorSymptom}</td>
                       <td style={tdStyle}>{job.customerCode}</td>
-                      <td style={tdStyle}>{job.requiredStart}</td>
-                      <td style={tdStyle}>{job.requiredFinish}</td>
                       <td style={tdStyle}>{job.siteId}</td>
                     </tr>
                   ))}
