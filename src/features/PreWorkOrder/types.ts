@@ -16,6 +16,16 @@ export interface PreWorkOrder {
   updated_by?: string;
   created_at?: string;
   updated_at?: string;
+  
+  // Fields สำหรับแสดงในตาราง (จาก API response)
+  workOrder?: string;
+  reportedDate?: string;
+  reportBy?: string;
+  shortDescription?: string;
+  equipment?: string;
+  errorSymptom?: string;
+  customerCode?: string;
+  siteId?: string;
 }
 
 // Dropdown options

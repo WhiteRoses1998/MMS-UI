@@ -258,15 +258,15 @@ export default function PreWorkTable({
                           i
                         </span>
                       </td>
-                      <td style={tdStyle}>{job.workOrder}</td>
-                      <td style={tdStyle}>{job.reportedDate}</td>
-                      <td style={tdStyle}>{job.reportBy}</td>
-                      <td style={tdStyle}>{job.shortDescription}</td>
-                      <td style={tdStyle}>{job.department}</td>
-                      <td style={tdStyle}>{job.equipment}</td>
-                      <td style={tdStyle}>{job.errorSymptom}</td>
-                      <td style={tdStyle}>{job.customerCode}</td>
-                      <td style={tdStyle}>{job.siteId}</td>
+                        <td style={tdStyle}>{job.workOrder}</td>
+                        <td style={tdStyle}>{job.reportedDate}</td>
+                        <td style={tdStyle}>{job.reportBy}</td>
+                        <td style={tdStyle}>{job.shortDescription}</td>
+                        <td style={tdStyle}>{job.department}</td>
+                        <td style={tdStyle}>{job.equipment}</td>
+                        <td style={tdStyle}>{job.errorSymptom}</td>
+                        <td style={tdStyle}>{job.customerCode}</td>
+                        <td style={tdStyle}>{job.siteId}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import PreWorkModalHeader from "@/features/PreWorkOrder/components/modal/PreWorkModalHeader";
 import PreWorkModalFooter from "@/features/PreWorkOrder/components/modal/PreWorkModalFooter";
@@ -9,9 +9,15 @@ import FaultInfoSection from "@/features/PreWorkOrder/components/forms/FaultInfo
 import MandatorySection from "@/features/PreWorkOrder/components/forms/MandatorySection";
 import FaultCodeSection from "@/features/PreWorkOrder/components/forms/FaultCodeSection";
 
-import { 
-  PreWorkOrder, 
-  PreWorkDropdowns 
+import {
+  getPreWorkOrder,
+  getPreWorkDropdowns,
+  updatePreWorkOrder,
+} from "@/features/PreWorkOrder/api/preWorkOrder.api";
+
+import {
+  PreWorkOrder,
+  PreWorkDropdowns,
 } from "@/features/PreWorkOrder/types";
 
 interface Props {
@@ -32,7 +38,7 @@ export default function PreWorkModal({ preWorkId, onClose }: Props) {
     fault_code_id: null,
   });
 
-  const [dropdowns] = useState<PreWorkDropdowns>({
+  const [dropdowns, setDropdowns] = useState<PreWorkDropdowns>({
     priorities: [],
     jobStatuses: [],
     faultTypes: [],
@@ -42,8 +48,39 @@ export default function PreWorkModal({ preWorkId, onClose }: Props) {
     locations: [],
   });
 
+  /** โหลดข้อมูลเมื่อเปิด modal */
+  useEffect(() => {
+    if (!preWorkId) return;
+
+    const fetchData = async () => {
+      const orderRes = await getPreWorkOrder(preWorkId);
+      const dropdownRes = await getPreWorkDropdowns();
+
+      setData(orderRes.data.data);
+
+      setDropdowns({
+        priorities: dropdownRes.data.priorities,
+        jobStatuses: dropdownRes.data.jobStatuses,
+        faultTypes: dropdownRes.data.faultTypes,
+        faultCodes: dropdownRes.data.faultCodes,
+        personnel: dropdownRes.data.personnel,
+        departments: dropdownRes.data.departments,
+        locations: dropdownRes.data.locations,
+      });
+    };
+
+    fetchData();
+  }, [preWorkId]);
+
+  /** เปลี่ยนค่า field จาก section ต่าง ๆ */
   const handleChange = (key: string, value: any) => {
     setData((prev) => ({ ...prev, [key]: value }));
+  };
+
+  /** กดบันทึก */
+  const handleSave = async () => {
+    await updatePreWorkOrder(preWorkId, data);
+    onClose();
   };
 
   return (
@@ -53,26 +90,29 @@ export default function PreWorkModal({ preWorkId, onClose }: Props) {
 
         <PreWorkModalLayout>
           <WorkOrderInfoSection data={data} onChange={handleChange} />
-          <FaultInfoSection 
-            data={data} 
-            faultTypes={dropdowns.faultTypes} 
-            onChange={handleChange} 
+
+          <FaultInfoSection
+            data={data}
+            faultTypes={dropdowns.faultTypes}
+            onChange={handleChange}
           />
-          <MandatorySection 
-            data={data} 
-            priorities={dropdowns.priorities} 
-            jobStatuses={dropdowns.jobStatuses} 
-            onChange={handleChange} 
+
+          <MandatorySection
+            data={data}
+            priorities={dropdowns.priorities}
+            jobStatuses={dropdowns.jobStatuses}
+            onChange={handleChange}
           />
-          <FaultCodeSection 
-            data={data} 
-            faultCodes={dropdowns.faultCodes} 
-            onChange={handleChange} 
+
+          <FaultCodeSection
+            data={data}
+            faultCodes={dropdowns.faultCodes}
+            onChange={handleChange}
           />
         </PreWorkModalLayout>
 
-        <PreWorkModalFooter onClose={onClose} />
+        <PreWorkModalFooter onClose={onClose} onSave={handleSave} />
       </div>
     </div>
   );
-} 
+}
