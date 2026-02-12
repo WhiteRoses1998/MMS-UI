@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import SearchBox from "@/components/common/SearchBox";
+import { getPreWorkList } from "@/features/PreWorkOrder/api/preWorkOrder.api";
 import { PreWorkOrder } from "../types";
 
 interface PreWorkTableProps {
@@ -24,26 +25,8 @@ export default function PreWorkTable({
         setLoading(true);
         setError(null);
 
-        const token = localStorage.getItem("token");
-        const res = await fetch("/api/work-orders/prework-list", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        console.log("✅ Response status:", res.status);
-
-        // ✅ แก้ไขตรงนี้: อ่านเป็น JSON ทีเดียว
-        if (!res.ok) {
-          const errorData = await res.json().catch(() => ({}));
-          console.error("❌ Error response:", errorData);
-          throw new Error(errorData.message || `HTTP ${res.status}`);
-        }
-
-        const json = await res.json();
-        console.log("✅ Data received:", json);
-
-        // backend ส่ง { data: [...] }
+        const res = await getPreWorkList();
+        const json = res.data;
         setData(json.data ?? []);
       } catch (err: any) {
         console.error("❌ Fetch error:", err);
@@ -262,7 +245,7 @@ export default function PreWorkTable({
                         <td style={tdStyle}>{job.reportedDate}</td>
                         <td style={tdStyle}>{job.reportBy}</td>
                         <td style={tdStyle}>{job.shortDescription}</td>
-                        <td style={tdStyle}>{job.department}</td>
+                        <td style={tdStyle}>{job.departments}</td>
                         <td style={tdStyle}>{job.equipment}</td>
                         <td style={tdStyle}>{job.errorSymptom}</td>
                         <td style={tdStyle}>{job.customerCode}</td>

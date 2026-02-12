@@ -1,59 +1,68 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui";
+import { PreWorkOrder, Priority, JobStatus } from "@/features/PreWorkOrder/types";
 
 interface Props {
-  data: any;
-  priorities: any[];
-  jobStatuses: any[];
+  data: PreWorkOrder;
+  priorities: Priority[];
+  jobStatuses: JobStatus[];
   onChange: (key: string, value: any) => void;
 }
 
-export default function MandatorySection({
-  data,
-  priorities,
-  jobStatuses,
-  onChange,
+export default function MandatorySection({ 
+  data, 
+  priorities, 
+  jobStatuses, 
+  onChange 
 }: Props) {
   return (
-    <div className="space-y-4">
-      <h3 className="font-semibold text-lg">Mandatory</h3>
+    <section className="border rounded-md p-4 space-y-4">
+      <h3 className="font-semibold text-gray-700">Mandatory</h3>
 
-      <Select
-        value={data.priority_id || ""}
-        onValueChange={(v) => onChange("priority_id", v)}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder="Priority" />
-        </SelectTrigger>
-        <SelectContent>
-          {priorities.map((p) => (
-            <SelectItem key={p.id} value={String(p.id)}>
-              {p.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+      <div className="grid grid-cols-3 gap-4">
+        <div>
+          <label>Priority</label>
+          <select 
+            className="input"
+            value={data.priority_id || ""}
+            onChange={(e) => onChange("priority_id", e.target.value)}
+          >
+            <option value="">Please Select</option>
+            {priorities.map((p) => (
+              <option key={p.value} value={p.value}>
+                {p.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      <Select
-        value={data.job_status_id || ""}
-        onValueChange={(v) => onChange("job_status_id", v)}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder="Job Status" />
-        </SelectTrigger>
-        <SelectContent>
-          {jobStatuses.map((s) => (
-            <SelectItem key={s.id} value={String(s.id)}>
-              {s.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
+        <div>
+          <label>Job Status</label>
+          <select 
+            className="input"
+            value={data.jobstatus_id || ""}
+            onChange={(e) => onChange("jobstatus_id", Number(e.target.value) || null)}
+          >
+            <option value="">Please Select</option>
+            {jobStatuses.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label>Department</label>
+          <select 
+            className="input"
+            value={data.dep_id || ""}
+            onChange={(e) => onChange("dep_id", e.target.value)}
+            disabled
+          >
+            <option value="">Please Select</option>
+            {/* Department จะถูกเลือกใน WorkOrderInfoSection */}
+          </select>
+        </div>
+      </div>
+    </section>
   );
 }
