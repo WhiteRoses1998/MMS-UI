@@ -1,155 +1,147 @@
 // src/types/prework.ts
 
-// ตรงกับ database + API payload ล่าสุด
 export interface PreWorkOrder {
-  id?: number;
-  workorder_id?: number;           // เพิ่ม: field จริงจาก database
-  work_order_no?: string;          // เปลี่ยนเป็น optional
-  job_reference?: string;          // เปลี่ยนเป็น optional
+  // Primary IDs
+  workorder_id?: number;
+  job_reference?: string;
 
-  // ชื่อใหม่ (จาก backend และที่เราจะใช้จริง)
+  // Work Order Details
   dep_id?: string;
   location_id?: string;
   detail_report?: string;
-  jobstatus_id?: number | null;    // เปลี่ยนเป็น number ตาม database (tinyint)
+  jobstatus_id?: number | null;
   requester_id?: string | null;
-  requester_user_id?: string | null; // เพิ่ม: field จาก database
+  requester_user_id?: string | null;
 
   // Equipment & Customer
-  equipment_id?: string | null;     // เพิ่ม
-  customer_id?: string | null;      // เพิ่ม
+  equipment_id?: string | null;
+  customer_id?: string | null;
+  equipment?: string;              // Equipment name/description
+  customer_name?: string;          // Customer name
+  location_name?: string;          // Location name
 
-  // ชื่อเก่า (รองรับ API เดิม หรือ render ใน UI บางส่วน)
-  departments?: string;
-  department?: string;              // เพิ่ม
-  location?: string;
-  location_name?: string;           // เพิ่ม
-  fault_description?: string;
-  job_status_id?: string | null;
+  // Fault Information
+  fault_type_id?: string | null;
+  priority_id?: string | null;
+  fault_code_id?: string | null;
 
-  fault_type_id?: string | null;    // เปลี่ยนเป็น optional
-  priority_id?: string | null;      // เปลี่ยนเป็น optional
-  fault_code_id?: string | null;    // เปลี่ยนเป็น optional
-
+  // Timestamps
   created_by?: string;
   updated_by?: string;
   created_at?: string;
   updated_at?: string;
-  creation_datetime?: string;       // เพิ่ม
-  import_timestamp?: string;        // เพิ่ม
+  creation_datetime?: string;
+  import_timestamp?: string;
 
-  // Fields สำหรับแสดงในตาราง (จาก API response)
+  // Display Fields (สำหรับแสดงในตาราง)
+  id?: number;
   workOrder?: string;
   reportedDate?: string;
   reportBy?: string;
   shortDescription?: string;
-  equipment?: string;
+  departments?: string;
+  department?: string;
   errorSymptom?: string;
   customerCode?: string;
-  customer_name?: string;           // เพิ่ม
   siteId?: string;
-  statusName?: string;              // เพิ่ม
-  currentStatusName?: string;       // เพิ่ม
+  statusName?: string;
+  currentStatusName?: string;
 }
 
-// Dropdown options (ปรับให้ใช้ value/label เพื่อความสม่ำเสมอ)
-export interface Priority {
+// Dropdown Base Interface
+interface DropdownOption {
   value: string;
   label: string;
-  lookup_id?: string;       // เพิ่ม: field เดิมจาก backend
-  lookup_name?: string;     // เพิ่ม: field เดิมจาก backend
+}
+
+// Specific Dropdown Types
+export interface Priority extends DropdownOption {
+  lookup_id?: string;
+  lookup_name?: string;
   level?: number;
 }
 
-export interface JobStatus {
-  value: string;
-  label: string;
-  jobstatus_id?: string | number;   // เพิ่ม: field เดิมจาก backend
-  jobstatus_type?: string;          // เพิ่ม: field เดิมจาก backend
+export interface JobStatus extends DropdownOption {
+  jobstatus_id?: string | number;
+  jobstatus_type?: string;
   color?: string;
 }
 
-export interface FaultType {
-  value: string;
-  label: string;
-  lookup_id?: string;       // เพิ่ม: field เดิมจาก backend
-  lookup_name?: string;     // เพิ่ม: field เดิมจาก backend
+export interface FaultType extends DropdownOption {
+  lookup_id?: string;
+  lookup_name?: string;
   description?: string;
 }
 
-export interface FaultCode {
-  value: string;
-  label: string;
-  lookup_id?: string;       // เพิ่ม: field เดิมจาก backend
-  lookup_name?: string;     // เพิ่ม: field เดิมจาก backend
-  code?: string;            // เปลี่ยนเป็น optional
-  description?: string;     // เปลี่ยนเป็น optional (อยู่แล้ว)
+export interface FaultCode extends DropdownOption {
+  lookup_id?: string;
+  lookup_name?: string;
+  code?: string;
+  description?: string;
   fault_type_id?: number;
 }
 
-export interface Personnel {
-  value: string;
-  label: string;
-  pns_id?: string;          // เพิ่ม: field เดิมจาก backend
-  pns_name?: string;        // เพิ่ม: field เดิมจาก backend
+export interface Personnel extends DropdownOption {
+  pns_id?: string;
+  pns_name?: string;
   employee_code?: string;
 }
 
-export interface Department {
-  value: string;
-  label: string;
-  dep_id?: string;          // เพิ่ม: field เดิมจาก backend
-  dep_name?: string;        // เพิ่ม: field เดิมจาก backend
+export interface Department extends DropdownOption {
+  dep_id?: string;
+  dep_name?: string;
   code?: string;
 }
 
-export interface Location {
-  value: string;
-  label: string;
-  location_id?: string;     // เพิ่ม: field เดิมจาก backend
-  location_name?: string;   // เพิ่ม: field เดิมจาก backend
+export interface Location extends DropdownOption {
+  location_id?: string;
+  location_name?: string;
   building?: string;
 }
 
-export interface Equipment {      // เพิ่มใหม่
-  value: string;
-  label: string;
+export interface Equipment extends DropdownOption {
   equipment_id?: string;
   equipment_name?: string;
 }
 
-export interface Customer {       // เพิ่มใหม่
-  value: string;
-  label: string;
+export interface Customer extends DropdownOption {
   customer_id?: string;
   customer_name?: string;
 }
 
-export interface Impact {         // เพิ่มใหม่
-  value: string;
-  label: string;
+export interface Impact extends DropdownOption {
   lookup_id?: string;
   lookup_name?: string;
 }
 
-export interface Symptom {        // เพิ่มใหม่ (symptoms = faultTypes)
-  value: string;
-  label: string;
+export interface Symptom extends DropdownOption {
   lookup_id?: string;
   lookup_name?: string;
 }
 
-// Dropdowns สำหรับ form
+export interface Fund extends DropdownOption {
+  fund_id?: string;
+  fund_name?: string;
+}
+
+export interface FundCenter extends DropdownOption {
+  fund_id?: string;
+  fund_name?: string;
+}
+
+// Main Dropdowns Interface
 export interface PreWorkDropdowns {
   priorities: Priority[];
   jobStatuses: JobStatus[];
-  faultTypes: Symptom[];        // เปลี่ยนชื่อ type
+  faultTypes: Symptom[];           // symptoms = faultTypes
   faultCodes: FaultCode[];
   personnel: Personnel[];
   departments: Department[];
   locations: Location[];
-  equipments?: Equipment[];     // เพิ่ม (optional)
-  customers?: Customer[];       // เพิ่ม (optional)
-  impacts?: Impact[];           // เพิ่ม (optional)
-  symptoms?: Symptom[];         // เพิ่ม (optional)
+  equipments?: Equipment[];
+  customers?: Customer[];
+  impacts?: Impact[];
+  symptoms?: Symptom[];
+  funds?: Fund[];
+  fundCenters?: FundCenter[];      // ⭐ เพิ่มใหม่
 }

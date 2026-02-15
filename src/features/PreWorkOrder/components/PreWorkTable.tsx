@@ -26,8 +26,28 @@ export default function PreWorkTable({
         setError(null);
 
         const res = await getPreWorkList();
-        const json = res.data;
-        setData(json.data ?? []);
+
+        // Debug: ดูโครงสร้าง response จริง ๆ
+        console.log("API Response:", res);
+        console.log("res.data:", res.data);
+
+        // รองรับทั้งสองรูปแบบที่พบบ่อย
+        let receivedData: PreWorkOrder[] = [];
+
+        if (Array.isArray(res.data)) {
+          receivedData = res.data;
+        } else if (res.data && Array.isArray(res.data.data)) {
+          receivedData = res.data.data;
+        } else {
+          console.warn("API response ไม่ใช่ array หรือไม่มี data.data");
+        }
+
+        console.log("ข้อมูลที่ set เข้า state:", receivedData);
+        if (receivedData.length > 0) {
+          console.log("ตัวอย่าง record แรก:", receivedData[0]);
+        }
+
+        setData(receivedData);
       } catch (err: any) {
         console.error("❌ Fetch error:", err);
         setError(err.message || "ไม่สามารถดึงข้อมูล PreWork ได้");
@@ -39,13 +59,16 @@ export default function PreWorkTable({
     fetchPreWorkOrders();
   }, []);
 
+  // ป้องกัน error เมื่อ data ไม่ใช่ array
+  const safeData = Array.isArray(data) ? data : [];
+
   // Pagination logic
-  const totalEntries = data.length;
+  const totalEntries = safeData.length;
   const totalPages = Math.ceil(totalEntries / entriesPerPage);
 
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = data.slice(indexOfFirstEntry, indexOfLastEntry);
+  const currentEntries = safeData.slice(indexOfFirstEntry, indexOfLastEntry);
 
   const handlePageChange = (pageNumber: number) => {
     if (pageNumber < 1 || pageNumber > totalPages) return;
@@ -69,7 +92,7 @@ export default function PreWorkTable({
             }}
           >
             {i}
-          </button>,
+          </button>
         );
       }
     } else {
@@ -92,7 +115,7 @@ export default function PreWorkTable({
             }}
           >
             {i}
-          </button>,
+          </button>
         );
       }
 
@@ -100,7 +123,7 @@ export default function PreWorkTable({
         pages.push(
           <span key="ellipsis" style={{ padding: "6px 12px" }}>
             ...
-          </span>,
+          </span>
         );
         pages.push(
           <button
@@ -109,7 +132,7 @@ export default function PreWorkTable({
             style={paginationButtonStyle}
           >
             {totalPages}
-          </button>,
+          </button>
         );
       }
     }
@@ -209,7 +232,7 @@ export default function PreWorkTable({
                 <tbody>
                   {currentEntries.map((job, index) => (
                     <tr
-                      key={job.id ?? index}
+                      key={job.workorder_id ?? index}
                       onClick={() => onSelect(job)}
                       style={{
                         backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#fff",
@@ -241,15 +264,15 @@ export default function PreWorkTable({
                           i
                         </span>
                       </td>
-                        <td style={tdStyle}>{job.workOrder}</td>
-                        <td style={tdStyle}>{job.reportedDate}</td>
-                        <td style={tdStyle}>{job.reportBy}</td>
-                        <td style={tdStyle}>{job.shortDescription}</td>
-                        <td style={tdStyle}>{job.departments}</td>
-                        <td style={tdStyle}>{job.equipment}</td>
-                        <td style={tdStyle}>{job.errorSymptom}</td>
-                        <td style={tdStyle}>{job.customerCode}</td>
-                        <td style={tdStyle}>{job.siteId}</td>
+                      <td style={tdStyle}>{job.workOrder || "-"}</td>
+                      <td style={tdStyle}>{job.reportedDate || "-"}</td>
+                      <td style={tdStyle}>{job.reportBy || "-"}</td>
+                      <td style={tdStyle}>{job.shortDescription || job.detail_report || "-"}</td>
+                      <td style={tdStyle}>{job.departments || job.departments || "-"}</td>
+                      <td style={tdStyle}>{job.equipment || "-"}</td>
+                      <td style={tdStyle}>{job.errorSymptom || "-"}</td>
+                      <td style={tdStyle}>{job.customerCode || "-"}</td>
+                      <td style={tdStyle}>{job.siteId || "-"}</td>
                     </tr>
                   ))}
                 </tbody>
