@@ -20,6 +20,15 @@ export interface PreWorkOrder {
   customer_name?: string;          // Customer name
   location_name?: string;          // Location name
 
+  // Additional Fields
+  tp_id?: string | null;           // Test Point ID
+  fund_id?: string | null;         // Fund Center ID
+  serial_no?: number | null;
+  post_date?: string | null;
+  main_leader_user_id?: string | null;
+  child_worker_user_id?: string | null;
+  group_id?: string | null;
+
   // Fault Information
   fault_type_id?: string | null;
   priority_id?: string | null;
@@ -129,6 +138,11 @@ export interface FundCenter extends DropdownOption {
   fund_name?: string;
 }
 
+export interface TestPoint extends DropdownOption {
+  tp_id?: string;
+  tp_name?: string;
+}
+
 // Main Dropdowns Interface
 export interface PreWorkDropdowns {
   priorities: Priority[];
@@ -143,5 +157,6 @@ export interface PreWorkDropdowns {
   impacts?: Impact[];
   symptoms?: Symptom[];
   funds?: Fund[];
-  fundCenters?: FundCenter[];      // ⭐ เพิ่มใหม่
+  fundCenters?: FundCenter[];
+  testPoints?: TestPoint[];        // ⭐ เพิ่มใหม่
 }

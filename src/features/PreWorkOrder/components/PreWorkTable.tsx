@@ -1,15 +1,19 @@
-import { useState, useEffect } from "react";
-import SearchBox from "@/components/common/SearchBox";
+import { useState, useEffect, useCallback } from "react";
 import { getPreWorkList } from "@/features/PreWorkOrder/api/preWorkOrder.api";
 import { PreWorkOrder } from "../types";
+import { SearchFilters } from "@/components/common/SearchBox";
 
 interface PreWorkTableProps {
   onSelect: (job: PreWorkOrder) => void;
+  filters: SearchFilters; // ✅ รับ filters จาก parent
+  triggerRefresh?: number;
   isSidebarOpen?: boolean;
 }
 
 export default function PreWorkTable({
   onSelect,
+  filters,
+  triggerRefresh = 0,
   isSidebarOpen = true,
 }: PreWorkTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -18,46 +22,42 @@ export default function PreWorkTable({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch Pre-Work Orders
-  useEffect(() => {
-    const fetchPreWorkOrders = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  // ✅ ฟังก์ชัน Fetch ข้อมูลพร้อม filters
+  const fetchPreWorkOrders = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-        const res = await getPreWorkList();
+      console.log("🔍 Fetching with filters:", filters);
 
-        // Debug: ดูโครงสร้าง response จริง ๆ
-        console.log("API Response:", res);
-        console.log("res.data:", res.data);
+      // ✅ ส่ง filters ไปยัง API
+      const res = await getPreWorkList(filters);
 
-        // รองรับทั้งสองรูปแบบที่พบบ่อย
-        let receivedData: PreWorkOrder[] = [];
-
-        if (Array.isArray(res.data)) {
-          receivedData = res.data;
-        } else if (res.data && Array.isArray(res.data.data)) {
-          receivedData = res.data.data;
-        } else {
-          console.warn("API response ไม่ใช่ array หรือไม่มี data.data");
-        }
-
-        console.log("ข้อมูลที่ set เข้า state:", receivedData);
-        if (receivedData.length > 0) {
-          console.log("ตัวอย่าง record แรก:", receivedData[0]);
-        }
-
-        setData(receivedData);
-      } catch (err: any) {
-        console.error("❌ Fetch error:", err);
-        setError(err.message || "ไม่สามารถดึงข้อมูล PreWork ได้");
-      } finally {
-        setLoading(false);
+      // รองรับทั้งสองรูปแบบ response
+      let receivedData: PreWorkOrder[] = [];
+      if (Array.isArray(res.data)) {
+        receivedData = res.data;
+      } else if (res.data && Array.isArray(res.data.data)) {
+        receivedData = res.data.data;
+      } else {
+        console.warn("API response ไม่ใช่ array หรือไม่มี data.data");
       }
-    };
 
+      console.log("✅ โหลดข้อมูลสำเร็จ:", receivedData.length, "รายการ");
+      setData(receivedData);
+      setCurrentPage(1); // ✅ รีเซ็ตหน้าเมื่อมีการค้นหาใหม่
+    } catch (err: any) {
+      console.error("❌ Fetch error:", err);
+      setError(err.message || "ไม่สามารถดึงข้อมูล PreWork ได้");
+    } finally {
+      setLoading(false);
+    }
+  }, [filters]); // ✅ dependency คือ filters
+
+  // ✅ โหลดข้อมูลเมื่อ filters หรือ triggerRefresh เปลี่ยน
+  useEffect(() => {
     fetchPreWorkOrders();
-  }, []);
+  }, [fetchPreWorkOrders, triggerRefresh]);
 
   // ป้องกัน error เมื่อ data ไม่ใช่ array
   const safeData = Array.isArray(data) ? data : [];
@@ -142,10 +142,7 @@ export default function PreWorkTable({
 
   return (
     <div style={{ padding: "20px", backgroundColor: "#f9fafb" }}>
-      {/* Search Box at the top */}
-      <div style={{ marginBottom: "24px" }}>
-        <SearchBox />
-      </div>
+      {/* ❌ ลบ SearchBox ออก - ย้ายไปอยู่ที่ parent component แล้ว */}
 
       {/* Table Container */}
       <div
@@ -184,15 +181,66 @@ export default function PreWorkTable({
 
         {/* Loading / Error */}
         {loading && (
-          <p style={{ textAlign: "center", padding: "20px" }}>
-            กำลังโหลดข้อมูล...
-          </p>
+          <div
+            style={{
+              textAlign: "center",
+              padding: "40px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "12px",
+            }}
+          >
+            <div
+              style={{
+                width: "40px",
+                height: "40px",
+                border: "4px solid #f3f3f3",
+                borderTop: "4px solid #17a2b8",
+                borderRadius: "50%",
+                animation: "spin 1s linear infinite",
+              }}
+            />
+            <p style={{ color: "#666", margin: 0 }}>กำลังโหลดข้อมูล...</p>
+          </div>
         )}
         {error && (
-          <p style={{ color: "red", textAlign: "center", padding: "20px" }}>
-            {error}
-          </p>
+          <div
+            style={{
+              color: "#721c24",
+              backgroundColor: "#f8d7da",
+              border: "1px solid #f5c6cb",
+              borderRadius: "4px",
+              padding: "12px 20px",
+              textAlign: "center",
+            }}
+          >
+            ❌ {error}
+            <button
+              onClick={fetchPreWorkOrders}
+              style={{
+                marginLeft: "12px",
+                padding: "4px 12px",
+                backgroundColor: "#721c24",
+                color: "#fff",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "13px",
+              }}
+            >
+              ลองใหม่
+            </button>
+          </div>
         )}
+
+        {/* CSS Animation for spinner */}
+        <style>{`
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+        `}</style>
 
         {/* Table Container with Horizontal Scroll */}
         {!loading && !error && (
@@ -230,98 +278,123 @@ export default function PreWorkTable({
                   </tr>
                 </thead>
                 <tbody>
-                  {currentEntries.map((job, index) => (
-                    <tr
-                      key={job.workorder_id ?? index}
-                      onClick={() => onSelect(job)}
-                      style={{
-                        backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#fff",
-                        cursor: "pointer",
-                      }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#e9ecef")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.backgroundColor =
-                          index % 2 === 0 ? "#f9f9f9" : "#fff")
-                      }
-                    >
-                      <td style={tdStyle}>
-                        <span
-                          style={{
-                            display: "inline-block",
-                            width: 20,
-                            height: 20,
-                            borderRadius: "50%",
-                            backgroundColor: "#333",
-                            color: "#fff",
-                            textAlign: "center",
-                            lineHeight: "20px",
-                            fontSize: 12,
-                            cursor: "pointer",
-                          }}
-                        >
-                          i
-                        </span>
+                  {currentEntries.length === 0 ? (
+                    <tr>
+                      <td
+                        colSpan={10}
+                        style={{
+                          ...tdStyle,
+                          textAlign: "center",
+                          padding: "40px",
+                          color: "#999",
+                        }}
+                      >
+                        {filters.workOrder || filters.equipment || filters.siteId || filters.department
+                          ? "ไม่พบข้อมูลที่ตรงกับการค้นหา"
+                          : "ไม่พบข้อมูล Pre-Work Order"}
                       </td>
-                      <td style={tdStyle}>{job.workOrder || "-"}</td>
-                      <td style={tdStyle}>{job.reportedDate || "-"}</td>
-                      <td style={tdStyle}>{job.reportBy || "-"}</td>
-                      <td style={tdStyle}>{job.shortDescription || job.detail_report || "-"}</td>
-                      <td style={tdStyle}>{job.departments || job.departments || "-"}</td>
-                      <td style={tdStyle}>{job.equipment || "-"}</td>
-                      <td style={tdStyle}>{job.errorSymptom || "-"}</td>
-                      <td style={tdStyle}>{job.customerCode || "-"}</td>
-                      <td style={tdStyle}>{job.siteId || "-"}</td>
                     </tr>
-                  ))}
+                  ) : (
+                    currentEntries.map((job, index) => (
+                      <tr
+                        key={job.workorder_id ?? index}
+                        onClick={() => onSelect(job)}
+                        style={{
+                          backgroundColor: index % 2 === 0 ? "#f9f9f9" : "#fff",
+                          cursor: "pointer",
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#e9ecef")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor =
+                            index % 2 === 0 ? "#f9f9f9" : "#fff")
+                        }
+                      >
+                        <td style={tdStyle}>
+                          <span
+                            style={{
+                              display: "inline-block",
+                              width: 20,
+                              height: 20,
+                              borderRadius: "50%",
+                              backgroundColor: "#333",
+                              color: "#fff",
+                              textAlign: "center",
+                              lineHeight: "20px",
+                              fontSize: 12,
+                              cursor: "pointer",
+                            }}
+                            title="ดูรายละเอียดเพิ่มเติม"
+                          >
+                            i
+                          </span>
+                        </td>
+                        <td style={tdStyle}>{job.workOrder || "-"}</td>
+                        <td style={tdStyle}>{job.reportedDate || "-"}</td>
+                        <td style={tdStyle}>{job.reportBy || "-"}</td>
+                        <td style={tdStyle}>
+                          {job.shortDescription || job.detail_report || "-"}
+                        </td>
+                        <td style={tdStyle}>
+                          {job.departments || "-"}
+                        </td>
+                        <td style={tdStyle}>{job.equipment || "-"}</td>
+                        <td style={tdStyle}>{job.errorSymptom || "-"}</td>
+                        <td style={tdStyle}>{job.customerCode || "-"}</td>
+                        <td style={tdStyle}>{job.siteId || "-"}</td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
 
             {/* Pagination */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginTop: 15,
-                paddingTop: 15,
-                borderTop: "1px solid #eee",
-              }}
-            >
-              <div style={{ color: "#666", fontSize: "14px" }}>
-                Showing {indexOfFirstEntry + 1} to{" "}
-                {Math.min(indexOfLastEntry, totalEntries)} of {totalEntries}{" "}
-                entries
+            {currentEntries.length > 0 && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginTop: 15,
+                  paddingTop: 15,
+                  borderTop: "1px solid #eee",
+                }}
+              >
+                <div style={{ color: "#666", fontSize: "14px" }}>
+                  Showing {indexOfFirstEntry + 1} to{" "}
+                  {Math.min(indexOfLastEntry, totalEntries)} of {totalEntries}{" "}
+                  entries
+                </div>
+                <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    style={{
+                      ...paginationButtonStyle,
+                      opacity: currentPage === 1 ? 0.5 : 1,
+                      cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                    }}
+                  >
+                    Previous
+                  </button>
+                  {renderPageNumbers()}
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    style={{
+                      ...paginationButtonStyle,
+                      opacity: currentPage === totalPages ? 0.5 : 1,
+                      cursor:
+                        currentPage === totalPages ? "not-allowed" : "pointer",
+                    }}
+                  >
+                    Next
+                  </button>
+                </div>
               </div>
-              <div style={{ display: "flex", gap: 5, alignItems: "center" }}>
-                <button
-                  onClick={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  style={{
-                    ...paginationButtonStyle,
-                    opacity: currentPage === 1 ? 0.5 : 1,
-                    cursor: currentPage === 1 ? "not-allowed" : "pointer",
-                  }}
-                >
-                  Previous
-                </button>
-                {renderPageNumbers()}
-                <button
-                  onClick={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  style={{
-                    ...paginationButtonStyle,
-                    opacity: currentPage === totalPages ? 0.5 : 1,
-                    cursor:
-                      currentPage === totalPages ? "not-allowed" : "pointer",
-                  }}
-                >
-                  Next
-                </button>
-              </div>
-            </div>
+            )}
           </>
         )}
       </div>

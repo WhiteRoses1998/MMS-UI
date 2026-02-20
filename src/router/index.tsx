@@ -7,7 +7,7 @@ import ChangePassword from "@/pages/ChangePassword";
 import WorkOrderPage from "@/pages/WorkOrderPage"; // หน้าว่าง (แก้จาก ActivityWorkOrderPage)
 import PreWorkOrderPage from "@/features/PreWorkOrder/pages/PreWorkOrderPage";
 import ActivityWorkOrderPage from "@/features/WorkOrder/pages/ActivityWorkOrderPage";
-import HistoricalWorkOrderPage from "@/features/WorkOrder/pages/HistoricalWorkOrderPage";
+import HistoricalWorkOrderPage from "@/features/HistoricalWorkOrder/pages/HistoricalWorkOrderPage";
 import React from "react";
 
 /**

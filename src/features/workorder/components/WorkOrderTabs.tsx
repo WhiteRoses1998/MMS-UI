@@ -4,16 +4,32 @@ import GeneralTab from "../tabs/GeneralTab";
 import PrepareTab from "../tabs/PrepareTab";
 import ActivityTab from "../tabs/ActivityTab";
 import ReportTab from "../tabs/ReportTab";
-import { WorkOrder } from "../types"; // ปรับ path ตามที่คุณใช้จริง
+import { WorkOrder, MasterData, Activity } from "../types"; // ปรับ path ตามที่คุณใช้จริง
 
 interface WorkOrderTabsProps {
   workOrder: WorkOrder;
+  masters: MasterData;
+  activities: Activity[];
   defaultValue?: string;
+  onUpdateGeneral?: (data: Partial<WorkOrder>) => void;
+  onUpdatePrepare?: (data: any) => void;
+  onAddActivity?: (activity: Partial<Activity>) => void;
+  onDeleteActivity?: (activityId: number) => void;
+  onRefreshActivities?: () => void;
+  onUpdateReport?: (data: any) => void;
 }
 
 export default function WorkOrderTabs({
   workOrder,
+  masters,
+  activities,
   defaultValue = "general",
+  onUpdateGeneral,
+  onUpdatePrepare,
+  onAddActivity,
+  onDeleteActivity,
+  onRefreshActivities,
+  onUpdateReport,
 }: WorkOrderTabsProps) {
   return (
     <Tabs defaultValue={defaultValue} className="w-full">
@@ -45,19 +61,19 @@ export default function WorkOrderTabs({
       </TabsList>
 
       <TabsContent value="general" className="mt-0">
-        <GeneralTab workOrder={workOrder} />
+        <GeneralTab workOrder={workOrder} masters={masters} onUpdate={onUpdateGeneral || (() => {})} />
       </TabsContent>
 
       <TabsContent value="prepare" className="mt-0">
-        <PrepareTab workOrder={workOrder} />
+        <PrepareTab workOrder={workOrder} masters={masters} onUpdate={onUpdatePrepare || (() => {})} />
       </TabsContent>
 
       <TabsContent value="activity" className="mt-0">
-        <ActivityTab workOrder={workOrder} />
+        <ActivityTab masters={masters} activities={activities} onAdd={onAddActivity || (() => {})} onDelete={onDeleteActivity || (() => {})} onRefresh={onRefreshActivities || (() => {})} />
       </TabsContent>
 
       <TabsContent value="report" className="mt-0">
-        <ReportTab workOrder={workOrder} />
+        <ReportTab workOrder={workOrder} masters={masters} onUpdate={onUpdateReport || (() => {})} />
       </TabsContent>
     </Tabs>
   );
