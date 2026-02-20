@@ -20,7 +20,7 @@ import { X, CheckCircle, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
-const API_BASE_URL = (typeof process !== 'undefined' && process.env?.NEXT_PUBLIC_API_URL) || "http://localhost:3000";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 const AUTO_REFRESH_INTERVAL = 30_000; // 30 วินาที
 
 // ===== Toast แทน alert =====

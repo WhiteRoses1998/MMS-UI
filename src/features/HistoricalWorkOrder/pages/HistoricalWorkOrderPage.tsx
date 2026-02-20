@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { WorkOrder } from '@/features/HistoricalWorkOrder/types';
 import HistoricalWorkOrderTable from '@/features/HistoricalWorkOrder/components/HistoricalWorkOrderTable';
 import HistoricalWorkOrderModal from '@/features/HistoricalWorkOrder/components/modal/HistoricalWorkOrderModal';
+import SearchBox, { SearchFilters } from '@/components/common/SearchBox'; // ✅ ใช้ SearchBox เดียวกับ Activity
 
 const API = '/api/historical-orders';
 
@@ -16,7 +17,7 @@ export default function HistoricalWorkOrderPage() {
   const [workOrders, setWorkOrders] = useState<WorkOrder[]>([]);
   const [isLoading, setIsLoading]   = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<SearchFilters>({
     workOrder:  '',
     equipment:  '',
     siteId:     '',
@@ -39,50 +40,23 @@ export default function HistoricalWorkOrderPage() {
     }
   }, [filters]);
 
+  // ✅ Auto-fetch ทุกครั้งที่ filters เปลี่ยน (เหมือน Activity)
   useEffect(() => { fetchList(); }, [fetchList]);
-
-  const handleFilterChange = (field: keyof typeof filters, value: string) => {
-    setFilters((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleClear = () => {
-    setFilters({ workOrder: '', equipment: '', siteId: '', department: '' });
-  };
 
   return (
     <div className="p-6 space-y-6">
-      {/* Filters */}
-      <div className="bg-white border border-gray-200 rounded-lg p-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-          {[
-            { key: 'workOrder',  label: 'Work Order No.',  placeholder: 'ค้นหา WO...' },
-            { key: 'equipment',  label: 'Equipment',       placeholder: 'Equipment ID...' },
-            { key: 'siteId',     label: 'Site ID',         placeholder: 'Site ID...' },
-            { key: 'department', label: 'Department',      placeholder: 'Department...' },
-          ].map(({ key, label, placeholder }) => (
-            <div key={key}>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">{label}</label>
-              <input
-                type="text"
-                value={filters[key as keyof typeof filters]}
-                onChange={(e) => handleFilterChange(key as keyof typeof filters, e.target.value)}
-                placeholder={placeholder}
-                onKeyDown={(e) => e.key === 'Enter' && fetchList()}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500"
-              />
-            </div>
-          ))}
-        </div>
-        <div className="flex justify-end gap-2">
-          <button onClick={handleClear} className="px-4 py-2 text-sm border border-gray-300 rounded hover:bg-gray-100 transition-colors">Clear</button>
-          <button onClick={fetchList}   className="px-4 py-2 text-sm bg-teal-600 text-white rounded hover:bg-teal-700 transition-colors">Search</button>
-        </div>
-      </div>
+
+      {/* ✅ ใช้ SearchBox เดียวกับ Activity แทน inline filter */}
+      <SearchBox
+        onSearch={(f) => setFilters(f)}
+        onClear={() => setFilters({ workOrder: '', equipment: '', siteId: '', department: '' })}
+      />
 
       {/* Table */}
       <HistoricalWorkOrderTable
         workOrders={workOrders}
         isLoading={isLoading}
+        filters={filters}
         onSelect={(wo) => setSelectedId(wo.workorder_id)}
       />
 
