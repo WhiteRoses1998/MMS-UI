@@ -33,13 +33,13 @@
       ],
     },
     server: {
-      host: '172.16.12.101',
+      // host: '172.16.12.101',
       fs: {
         strict: false, // ช่วยบน Windows ถ้า path ยาวหรือ symlink
       },
       proxy: {
         '/api': {
-          target: 'http://172.16.12.101:3000', // 👈 port backend ของคุณ
+          target: 'http://localhost:3000', // 👈 port backend ของคุณ
           changeOrigin: true,
         },
       }
